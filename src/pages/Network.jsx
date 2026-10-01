@@ -1,0 +1,1 @@
+export default function Network() { return <h1 className="text-3xl font-bold text-gray-800">Alumni Network</h1>; }
