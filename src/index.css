@@ -1,1 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+
+html { scroll-behavior: smooth; }
+
+/* scroll karne par element pehle chhupa rehta hai, phir smoothly aata hai */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.show { opacity: 1; transform: none; }
+
+/* dark: classes ko band rakhta hai, jab tak .dark class na lage */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --color-brand-50: #f1f6fc;
+  --color-brand-100: #e0ecf8;
+  --color-brand-200: #c5daf1;
+  --color-brand-300: #9cc0e6;
+  --color-brand-500: #3b7dc0;
+  --color-brand-600: #1f4a82;
+  --color-brand-700: #1a3d6d;
+  --color-brand-800: #142f56;
+  --color-brand-900: #0f2547;
+}
+
+body { background: #f5f8fc; color: #0f172a; }
+
+@keyframes fade-in { from { opacity: 0; transform: translateY(8px); } }
+.page { animation: fade-in 0.4s ease-out; }
