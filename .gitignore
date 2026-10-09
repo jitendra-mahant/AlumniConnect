@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# environment files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# builds
+dist/
+build/
+
+# local dev data / logs
+.mongo-data/
+*.log
+
+# compiled C++ binaries
+cpp/bin/
+*.exe
+*.o
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
