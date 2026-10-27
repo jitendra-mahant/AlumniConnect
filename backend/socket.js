@@ -53,21 +53,22 @@ function initSocket(httpServer) {
     .map((s) => s.trim().replace(/\/+$/, ''))
     .filter(Boolean);
 
-  const localOrigins = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:5000',
-    'http://127.0.0.1:5000',
-    'http://localhost:5174',
-  ];
-
   const isSocketOriginAllowed = (origin) => {
     if (!origin) return true;
     const norm = origin.trim().replace(/\/+$/, '');
-    if (configuredOrigins.includes(norm) || localOrigins.includes(norm)) {
+    if (configuredOrigins.includes(norm)) {
       return true;
     }
-    if (process.env.ALLOW_VERCEL_PREVIEWS === 'true' && /^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/.test(norm)) {
+    // Allow any Vercel production or preview deployment (*.vercel.app)
+    if (/^https:\/\/([a-zA-Z0-9-]+\.)*vercel\.app$/i.test(norm)) {
+      return true;
+    }
+    // Allow Render deployment origins (*.onrender.com)
+    if (/^https:\/\/([a-zA-Z0-9-]+\.)*onrender\.com$/i.test(norm)) {
+      return true;
+    }
+    // Allow localhost / 127.0.0.1 on any dev port
+    if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(norm)) {
       return true;
     }
     return false;
@@ -76,11 +77,7 @@ function initSocket(httpServer) {
   io = new Server(httpServer, {
     cors: {
       origin: (origin, callback) => {
-        if (isSocketOriginAllowed(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error(`Socket CORS error: Origin ${origin} is not allowed`));
-        }
+        callback(null, isSocketOriginAllowed(origin));
       },
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       credentials: true,
