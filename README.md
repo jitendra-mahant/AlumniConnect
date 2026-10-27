@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AlumniConnect — KKWAGH Alumni & Student Network
 
 AlumniConnect is a high-performance, college-specific professional networking and career mentorship platform engineered specifically for **K.K. Wagh Institute of Engineering Education & Research (KKWAGH)**.
@@ -371,3 +372,6 @@ alumniconnect/
 │   └── scripts/                  # Automated verification and test suites
 └── cpp/                          # Standalone C++ verification modules
 ```
+=======
+# AlumniConnect
+>>>>>>> origin/main
