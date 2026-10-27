@@ -33,4 +33,43 @@ const authorize = (...roles) => (req, _res, next) => {
   next();
 };
 
-module.exports = { protect, authorize };
+// Verification-based authorization: checks server-side authoritative status.
+// Enforces that the user has been approved by an administrator before accessing protected data.
+const requireVerified = (req, _res, next) => {
+  if (!req.user) {
+    return next(new ApiError(401, 'Not authenticated. Please log in.'));
+  }
+  // Administrators are inherently authorized
+  if (req.user.role === 'admin') {
+    return next();
+  }
+  // Check verification status on authoritative user document
+  if (req.user.verificationStatus === 'pending' || req.user.isVerified === false) {
+    return next(
+      new ApiError(
+        403,
+        'Your profile is awaiting college administrator verification. You will be notified as soon as it is approved.',
+        {
+          code: 'PENDING_VERIFICATION',
+          verificationStatus: 'pending',
+        }
+      )
+    );
+  }
+  if (req.user.verificationStatus === 'rejected') {
+    return next(
+      new ApiError(
+        403,
+        'Your account verification was rejected by a college administrator.',
+        {
+          code: 'REJECTED_VERIFICATION',
+          verificationStatus: 'rejected',
+          verificationNote: req.user.verificationNote,
+        }
+      )
+    );
+  }
+  next();
+};
+
+module.exports = { protect, authorize, requireVerified };

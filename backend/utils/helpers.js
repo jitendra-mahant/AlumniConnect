@@ -43,6 +43,25 @@ const isSafeUrl = (url) => {
   }
 };
 
+// Normalize and validate LinkedIn URL
+const normalizeLinkedInUrl = (raw) => {
+  if (!raw || typeof raw !== 'string') return '';
+  let str = raw.trim();
+  if (!str) return '';
+  if (!/^https?:\/\//i.test(str)) {
+    str = 'https://' + str;
+  }
+  try {
+    const parsed = new URL(str);
+    if (!parsed.hostname.toLowerCase().includes('linkedin.com')) {
+      return '';
+    }
+    return parsed.toString();
+  } catch {
+    return '';
+  }
+};
+
 // IDOR protection helper: checks if requester owns resource or is admin
 const assertOwnerOrAdmin = (req, resourceOwnerId, message = 'You do not have permission to modify this resource.') => {
   const isOwner = String(resourceOwnerId) === String(req.user._id);
@@ -52,4 +71,4 @@ const assertOwnerOrAdmin = (req, resourceOwnerId, message = 'You do not have per
   }
 };
 
-module.exports = { isValidId, assertId, escapeRegex, toArray, toBool, pick, isSafeUrl, assertOwnerOrAdmin };
+module.exports = { isValidId, assertId, escapeRegex, toArray, toBool, pick, isSafeUrl, normalizeLinkedInUrl, assertOwnerOrAdmin };

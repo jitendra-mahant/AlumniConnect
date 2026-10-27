@@ -16,15 +16,17 @@ function JobCard({ job, user, onOpen, onToggleSave }) {
   return (
     <article className="card-hover flex cursor-pointer flex-col p-5" onClick={() => onOpen(job)}>
       <div className="flex items-start gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-navy-50 text-navy-700"><Building2 className="h-6 w-6" /></div>
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300">
+          <Building2 className="h-6 w-6" />
+        </div>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-display text-base font-bold text-navy-950">{job.title}</h3>
-          <p className="truncate text-sm font-semibold text-navy-700">{job.company}</p>
+          <h3 className="truncate font-display text-base font-bold text-slate-900 dark:text-slate-100">{job.title}</h3>
+          <p className="truncate text-sm font-semibold text-brand-600 dark:text-brand-400">{job.company}</p>
         </div>
         {user.role === 'student' && (
           <button
             onClick={(e) => { e.stopPropagation(); onToggleSave(job); }}
-            className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-navy-700"
+            className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-800"
             aria-label={job.saved ? 'Remove from saved' : 'Save opportunity'}
           >
             {job.saved ? <BookmarkCheck className="h-5 w-5 text-brand-600" /> : <Bookmark className="h-5 w-5" />}

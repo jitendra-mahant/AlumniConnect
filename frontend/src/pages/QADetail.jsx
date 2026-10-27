@@ -241,16 +241,16 @@ export default function QADetail() {
     <div className="container-page py-6 max-w-4xl">
       {/* Back Link */}
       <div className="mb-4">
-        <Link to="/qa" className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-navy-900 transition">
+        <Link to="/qa" className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white transition">
           <ArrowLeft className="h-4 w-4" /> Back to All Questions
         </Link>
       </div>
 
       {/* Main Question Card */}
-      <article className="card p-6 mb-8 border-slate-200">
+      <article className="card p-6 mb-8 border-slate-200 dark:border-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
-            <span className="rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700">
+            <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
               {question.category}
             </span>
             <StatusBadge status={question.status} />
@@ -265,17 +265,17 @@ export default function QADetail() {
           </div>
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-extrabold text-navy-950 mb-4 leading-snug">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-4 leading-snug">
           {question.title}
         </h1>
 
         {/* Author Bio Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 text-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4 text-sm">
           <div className="flex items-center gap-3">
             <Avatar name={question.author?.name} size="md" />
             <div>
-              <p className="font-semibold text-slate-800">{question.author?.name}</p>
-              <p className="text-xs text-slate-500">
+              <p className="font-semibold text-slate-900 dark:text-white">{question.author?.name}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {question.author?.role === 'alumni'
                   ? `${question.author?.alumniProfile?.currentJobTitle || 'Alumnus'} ${
                       question.author?.alumniProfile?.currentCompany ? `@ ${question.author.alumniProfile.currentCompany}` : ''
@@ -293,14 +293,14 @@ export default function QADetail() {
               <>
                 <button
                   onClick={() => setEditQuestionOpen(true)}
-                  className="btn-ghost !p-2 text-slate-500 hover:text-navy-900"
+                  className="btn-ghost !p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white"
                   title="Edit Question"
                 >
                   <Edit2 className="h-4 w-4" />
                 </button>
                 <button
                   onClick={handleDeleteQuestion}
-                  className="btn-ghost !p-2 text-red-500 hover:bg-red-50"
+                  className="btn-ghost !p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40"
                   title="Delete Question"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -309,7 +309,7 @@ export default function QADetail() {
             )}
             <button
               onClick={() => openReport('question', question._id)}
-              className="btn-ghost !p-2 text-slate-400 hover:text-slate-600"
+              className="btn-ghost !p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               title="Report Question"
             >
               <Flag className="h-4 w-4" />
@@ -318,17 +318,17 @@ export default function QADetail() {
         </div>
 
         {/* Question Body */}
-        <div className="prose prose-slate max-w-none text-slate-700 whitespace-pre-wrap text-sm sm:text-base leading-relaxed mb-6">
+        <div className="prose prose-slate max-w-none text-slate-700 dark:text-slate-300 whitespace-pre-wrap text-sm sm:text-base leading-relaxed mb-6">
           {question.description}
         </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100">
+        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
           {(question.tags || []).map((t) => (
             <Link
               key={t}
               to={`/qa?tag=${encodeURIComponent(t)}`}
-              className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200 transition"
+              className="rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
             >
               #{t}
             </Link>
@@ -339,15 +339,15 @@ export default function QADetail() {
       {/* Answers Section */}
       <section className="mb-10">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-navy-950 flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-brand-600" />
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-brand-600 dark:text-brand-400" />
             {answers.length} {answers.length === 1 ? 'Answer' : 'Answers'}
           </h2>
         </div>
 
         {answers.length === 0 ? (
           <div className="card p-8 text-center text-slate-500 mb-8 border-dashed">
-            <p className="font-semibold text-slate-700">No answers yet.</p>
+            <p className="font-semibold text-slate-700 dark:text-slate-300">No answers yet.</p>
             <p className="text-sm mt-1">Verified alumni are notified of questions in their domain.</p>
           </div>
         ) : (
@@ -462,17 +462,17 @@ export default function QADetail() {
 
                   {/* Comments / Follow-ups Section */}
                   {((ans.comments && ans.comments.length > 0) || activeCommentAnswerId === ans._id) && (
-                    <div className="mt-4 border-t border-slate-100 pt-3 bg-slate-50/60 rounded-lg p-3 space-y-3">
+                    <div className="mt-4 border-t border-slate-200 dark:border-slate-800 pt-3 bg-slate-50 dark:bg-slate-800/60 rounded-lg p-3 space-y-3">
                       {(ans.comments || []).map((c) => (
-                        <div key={c._id} className="text-xs text-slate-700 border-b border-slate-100 last:border-none pb-2 last:pb-0">
+                        <div key={c._id} className="text-xs text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-700 last:border-none pb-2 last:pb-0">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="font-semibold text-navy-950">
+                            <span className="font-semibold text-slate-900 dark:text-white">
                               {c.author?.name}
                               <span className="ml-1 text-[11px] text-slate-400 capitalize">({c.author?.role})</span>
                             </span>
                             <span className="text-[11px] text-slate-400">{timeAgo(c.createdAt)}</span>
                           </div>
-                          <p className="text-slate-600 whitespace-pre-wrap">{c.body}</p>
+                          <p className="text-slate-600 dark:text-slate-300 whitespace-pre-wrap">{c.body}</p>
                         </div>
                       ))}
 
@@ -509,8 +509,8 @@ export default function QADetail() {
         )}
 
         {/* Write an Answer Section */}
-        <div className="card p-6 border-slate-200">
-          <h3 className="text-base font-bold text-navy-950 mb-2">Your Answer</h3>
+        <div className="card p-6 border-slate-200 dark:border-slate-800">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">Your Answer</h3>
           {isAlumni || isAdmin ? (
             <form onSubmit={handlePostAnswer} className="space-y-4">
               <Field hint="Share actionable advice, industry experience, or specific resources.">
@@ -530,8 +530,8 @@ export default function QADetail() {
               </div>
             </form>
           ) : (
-            <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-sm text-slate-600">
-              <p className="font-semibold text-navy-900 mb-1">
+            <div className="rounded-xl border border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20 p-4 text-sm text-slate-600 dark:text-slate-300">
+              <p className="font-semibold text-slate-900 dark:text-white mb-1">
                 Verified Alumni Answers Only
               </p>
               <p>

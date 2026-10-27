@@ -58,7 +58,7 @@ function MyRequests({ role }) {
     <>
       <div className="mb-4 flex flex-wrap gap-2">
         {['', 'pending', 'accepted', 'rejected', 'completed'].map((s) => (
-          <button key={s || 'all'} onClick={() => setStatus(s)} className={`chip capitalize ${status === s ? '!bg-navy-800 !text-white' : 'hover:bg-navy-100'}`}>{s || 'All'}</button>
+          <button key={s || 'all'} onClick={() => setStatus(s)} className={`chip capitalize ${status === s ? '!bg-teal-600 dark:!bg-teal-500 !text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>{s || 'All'}</button>
         ))}
       </div>
       {loading && !data ? <PageLoader /> : error ? <ErrorState message={error} onRetry={reload} /> : items.length === 0 ? (

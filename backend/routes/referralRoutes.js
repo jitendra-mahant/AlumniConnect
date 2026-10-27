@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const c = require('../controllers/referralController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, requireVerified } = require('../middleware/auth');
 
-router.use(protect);
+router.use(protect, requireVerified);
 router.post('/', authorize('student'), c.createRequest);
 router.get('/', c.listRequests);
 router.put('/:id', authorize('student', 'alumni'), c.updateRequest);

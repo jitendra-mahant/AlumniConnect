@@ -8,12 +8,39 @@
       content="AlumniConnect is your college's trusted professional network. Discover verified alumni, get mentorship, referrals, jobs and internships."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Typography: Arial (system), Roboto (Google Fonts), Times New Roman (system) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('alumniconnect_theme');
+          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+
+          var font = localStorage.getItem('alumniconnect_font') || 'arial';
+          // Migrate legacy 'helvetica' → 'roboto' (Helvetica not available on Windows)
+          if (font === 'helvetica') { font = 'roboto'; localStorage.setItem('alumniconnect_font', 'roboto'); }
+          var fontMap = {
+            arial: 'Arial, Helvetica, sans-serif',
+            roboto: "'Roboto', Arial, sans-serif",
+            times: "'Times New Roman', Times, Georgia, serif",
+          };
+          var chosenFont = fontMap[font] || fontMap.arial;
+          document.documentElement.style.setProperty('--app-font-family', chosenFont);
+          document.documentElement.style.setProperty('--app-font', chosenFont);
+          document.documentElement.style.setProperty('--heading-font', chosenFont);
+          document.documentElement.setAttribute('data-font', font);
+        } catch (e) {}
+      })();
+    </script>
     <title>AlumniConnect – Your College's Trusted Alumni Network</title>
   </head>
   <body>

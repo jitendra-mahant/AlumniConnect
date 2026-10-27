@@ -18,7 +18,11 @@ export function ToastProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ success: (m) => push(m, 'success'), error: (m) => push(m, 'error') }),
+    () => ({
+      success: (m) => push(m, 'success'),
+      error: (m) => push(m, 'error'),
+      showToast: (m, type = 'success') => push(m, type === 'error' ? 'error' : 'success'),
+    }),
     [push]
   );
 

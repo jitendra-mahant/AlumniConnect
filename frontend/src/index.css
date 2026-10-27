@@ -2,74 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Typography options: Arial (system), Roboto (Google Fonts), Times New Roman (system) */
+  --font-fallback: Arial, Helvetica, sans-serif;
+  --font-arial: Arial, Helvetica, sans-serif;
+  --font-roboto: 'Roboto', Arial, sans-serif;
+  --font-times: 'Times New Roman', Times, Georgia, serif;
+  --app-font-family: Arial, Helvetica, sans-serif;
+  --app-font: var(--app-font-family);
+  --heading-font: var(--app-font-family);
+
+  /* Core Design System Tokens: Light Mode (Teal & Slate Spectrum) */
+  --page-bg: #f8fafc;
+  --page-surface: #ffffff;
+  --page-surface-muted: #f1f5f9;
+  --page-text: #1e293b;
+  --heading-text: #0f172a;
+  --muted-copy: #64748b;
+  --page-border: rgb(226 232 240 / 0.8);
+  --focus-ring: #0d9488;
+  --page-shadow: 0 18px 45px -32px rgb(15 23 42 / 0.32);
+  --primary-action: #0d9488;
+  --hover-action: #0f766e;
+}
+
+.dark {
+  /* Core Design System Tokens: Dark Mode (Teal & Slate Spectrum) */
+  --page-bg: #020617;
+  --page-surface: #0f172a;
+  --page-surface-muted: #1e293b;
+  --page-text: #e2e8f0;
+  --heading-text: #f1f5f9;
+  --muted-copy: #94a3b8;
+  --page-border: rgb(30 41 59 / 0.8);
+  --focus-ring: #2dd4bf;
+  --page-shadow: 0 18px 45px -28px rgb(0 0 0 / 0.72);
+  --primary-action: #2dd4bf;
+  --hover-action: #14b8a6;
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    font-family: var(--app-font-family, Arial, Helvetica, sans-serif);
   }
   body {
-    @apply bg-slate-50 font-sans text-slate-700;
+    background-color: var(--page-bg);
+    color: var(--page-text);
+    font-family: var(--app-font-family, Arial, Helvetica, sans-serif);
+    overflow-x: hidden;
+    @apply transition-colors duration-150;
   }
-  h1, h2, h3, h4 {
-    @apply font-display text-navy-950;
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--heading-text);
+    font-family: var(--app-font-family, Arial, Helvetica, sans-serif);
+    @apply font-bold tracking-tight;
+  }
+  button, input, select, textarea, optgroup {
+    font-family: inherit;
   }
   :focus-visible {
-    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+    outline: 2px solid var(--focus-ring, #0d9488);
+    outline-offset: 2px;
   }
 }
 
 @layer components {
   .btn {
+    font-family: inherit;
     @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition
       disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-primary {
-    @apply btn bg-navy-800 text-white shadow-sm hover:bg-navy-900 active:scale-[0.98];
+    @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:scale-[0.98] dark:bg-brand-600 dark:hover:bg-brand-500;
   }
   .btn-accent {
-    @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:scale-[0.98];
+    @apply btn bg-brand-500 text-white shadow-sm hover:bg-brand-600 active:scale-[0.98];
   }
   .btn-secondary {
-    @apply btn border border-slate-300 bg-white text-slate-700 hover:border-navy-300 hover:bg-navy-50 hover:text-navy-800;
+    @apply btn border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300
+      dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:border-slate-700 dark:hover:text-white;
   }
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700;
   }
   .btn-ghost {
-    @apply btn text-slate-600 hover:bg-slate-100;
+    @apply btn text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white;
   }
   .btn-sm {
     @apply px-3 py-1.5 text-xs;
   }
 
   .card {
-    @apply rounded-xl border border-slate-200 bg-white shadow-card;
+    font-family: inherit;
+    background-color: var(--page-surface);
+    border-color: var(--page-border);
+    @apply rounded-xl border shadow-card transition-all duration-200;
   }
   .card-hover {
-    @apply card transition duration-200 hover:-translate-y-0.5 hover:border-navy-200 hover:shadow-lift;
+    @apply card hover:-translate-y-0.5 hover:shadow-lift hover:border-brand-500/30 dark:hover:border-brand-400/30;
   }
 
   .input {
-    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 shadow-sm
-      transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+    font-family: inherit;
+    background-color: var(--page-surface);
+    border-color: var(--page-border);
+    color: var(--page-text);
+    @apply block w-full rounded-lg border px-3 py-2 text-sm placeholder-slate-400 dark:placeholder-slate-500 shadow-sm
+      transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:focus:border-brand-400;
   }
   .label {
-    @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500;
+    font-family: inherit;
+    @apply mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full bg-navy-50 px-2.5 py-1 text-xs font-medium text-navy-700;
+    font-family: inherit;
+    @apply inline-flex items-center gap-1 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700
+      dark:bg-slate-800 dark:text-slate-300 dark:ring-1 dark:ring-slate-700/60;
   }
   .badge {
+    font-family: inherit;
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
   }
 
   .skeleton {
-    @apply relative overflow-hidden rounded-md bg-slate-200/70;
+    @apply relative overflow-hidden rounded-md bg-slate-200/70 dark:bg-slate-800;
   }
   .skeleton::after {
     content: '';
-    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent;
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent dark:via-slate-700/40;
     animation: shimmer 1.4s infinite;
   }
 
@@ -77,3 +143,48 @@
     @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
   }
 }
+
+/* Print and PDF typography standard */
+@media print {
+  body, * {
+    font-family: Arial, 'Times New Roman' !important;
+  }
+}
+
+/* Per-font typographic personality tweaks */
+[data-font='roboto'] body,
+[data-font='roboto'] h1,
+[data-font='roboto'] h2,
+[data-font='roboto'] h3,
+[data-font='roboto'] h4,
+[data-font='roboto'] h5,
+[data-font='roboto'] h6 {
+  letter-spacing: 0.01em;
+  font-weight: inherit;
+}
+
+[data-font='roboto'] h1,
+[data-font='roboto'] h2,
+[data-font='roboto'] h3 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+[data-font='times'] body {
+  line-height: 1.75;
+  font-size: 0.975rem;
+}
+
+[data-font='times'] h1,
+[data-font='times'] h2,
+[data-font='times'] h3 {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+[data-font='arial'] h1,
+[data-font='arial'] h2,
+[data-font='arial'] h3 {
+  letter-spacing: -0.015em;
+}
+

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Award, BadgeCheck, BookOpen, Briefcase, Building2, Check, CheckCircle2, Clock, ExternalLink, Flag, Github, GraduationCap,
-  Globe, HandHeart, Handshake, Languages, Linkedin, Loader2, MapPin, MessageSquare, Network, Pencil, UserPlus, XCircle, Mail, Phone,
+  Globe, HandHeart, Handshake, Languages, Linkedin, Loader2, Lock, MapPin, MessageSquare, Network, Pencil, UserPlus, XCircle, Mail,
 } from 'lucide-react';
 import api, { errorMessage } from '../api/client';
 import useFetch from '../hooks/useFetch';
@@ -14,8 +14,8 @@ import { ConnectModal, MentorshipModal, MessageModal, ReferralModal } from '../c
 function Section({ title, icon: Icon, children }) {
   return (
     <section className="card p-5 sm:p-6">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold">
-        {Icon && <Icon className="h-5 w-5 text-brand-600" />} {title}
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-100">
+        {Icon && <Icon className="h-5 w-5 text-brand-600 dark:text-brand-400" />} {title}
       </h2>
       {children}
     </section>
@@ -24,9 +24,9 @@ function Section({ title, icon: Icon, children }) {
 
 const Fact = ({ label, value }) =>
   value || value === 0 ? (
-    <div className="flex justify-between gap-4 border-b border-slate-100 py-2 text-sm last:border-0">
-      <dt className="text-slate-500">{label}</dt>
-      <dd className="text-right font-semibold text-slate-800">{value}</dd>
+    <div className="flex justify-between gap-4 border-b border-slate-100 dark:border-slate-800 py-2 text-sm last:border-0">
+      <dt className="text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="text-right font-semibold text-slate-800 dark:text-slate-200">{value}</dd>
     </div>
   ) : null;
 
@@ -134,7 +134,11 @@ export default function AlumniProfile() {
     : (a.previousCompanies || []).map((c, i) => ({ company: c, title: a.previousJobTitles?.[i] || '' }));
   const path = pathData?.path || [];
 
-  const connectButton = connected ? (
+  const connectButton = !a.user ? (
+    <button className="btn-secondary opacity-75 cursor-not-allowed" disabled title="This alumnus has not yet activated their portal login account.">
+      <UserPlus className="h-4 w-4 text-slate-400" /> Account Unclaimed
+    </button>
+  ) : connected ? (
     <button className="btn-secondary" disabled><CheckCircle2 className="h-4 w-4 text-emerald-600" /> Connected</button>
   ) : connection?.status === 'pending' ? (
     <button className="btn-secondary" disabled><Clock className="h-4 w-4" /> {connection.direction === 'sent' ? 'Request sent' : 'Request received'}</button>
@@ -158,17 +162,21 @@ export default function AlumniProfile() {
 
       {/* Header */}
       <div className="card overflow-hidden">
-        <div className="h-28 bg-gradient-to-r from-navy-900 via-navy-700 to-brand-500 sm:h-36" />
+        <div className="h-28 bg-gradient-to-r from-navy-900 via-teal-800 to-brand-600 sm:h-36" />
         <div className="px-5 pb-6 sm:px-8">
-          <div className="-mt-12 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end">
-            <Avatar name={a.fullName} src={a.profilePhoto} size="xl" className="!ring-4" />
-            <div className="min-w-0 flex-1 pb-1">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start pt-1">
+            <div className="-mt-14 sm:-mt-16 shrink-0">
+              <Avatar name={a.fullName} src={a.profilePhoto} size="xl" className="!ring-4 ring-white dark:ring-slate-900 shadow-md" />
+            </div>
+            <div className="min-w-0 flex-1 pt-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{a.fullName}</h1>
+                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">{a.fullName}</h1>
                 {a.verificationStatus === 'verified' ? <VerifiedBadge /> : <StatusBadge status={a.verificationStatus} />}
               </div>
-              <p className="mt-0.5 text-base font-semibold text-slate-700">{a.currentJobTitle} <span className="font-normal text-slate-500">at</span> <span className="text-navy-700">{a.currentCompany}</span></p>
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-500">
+              <p className="mt-1 text-base font-semibold text-slate-700 dark:text-slate-300">
+                {a.currentJobTitle} <span className="font-normal text-slate-500">at</span> <span className="text-brand-600 dark:text-brand-400 font-bold">{a.currentCompany}</span>
+              </p>
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
                 <span className="flex items-center gap-1.5"><GraduationCap className="h-4 w-4" /> {a.department} · Class of {a.graduationYear}</span>
                 {a.location && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {a.location}</span>}
                 <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4" /> {a.experienceYears} yrs experience</span>
@@ -189,10 +197,10 @@ export default function AlumniProfile() {
                 >
                   <MessageSquare className="h-4 w-4" /> Message
                 </button>
-                <button className="btn-accent" onClick={() => setModal('mentorship')} disabled={!a.availableForMentorship} title={!a.availableForMentorship ? 'Not available for mentorship right now' : ''}>
+                <button className="btn-accent" onClick={() => setModal('mentorship')} disabled={!a.user || !a.availableForMentorship} title={!a.user ? 'Alumnus has not yet activated their portal account' : !a.availableForMentorship ? 'Not available for mentorship right now' : ''}>
                   <HandHeart className="h-4 w-4" /> Request Mentorship
                 </button>
-                <button className="btn-secondary" onClick={() => setModal('referral')} disabled={!a.availableForReferral} title={!a.availableForReferral ? 'Not offering referrals right now' : ''}>
+                <button className="btn-secondary" onClick={() => setModal('referral')} disabled={!a.user || !a.availableForReferral} title={!a.user ? 'Alumnus has not yet activated their portal account' : !a.availableForReferral ? 'Not offering referrals right now' : ''}>
                   <Handshake className="h-4 w-4" /> Request Referral
                 </button>
               </>
@@ -217,16 +225,16 @@ export default function AlumniProfile() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          {a.bio && <Section title="About" icon={BookOpen}><p className="whitespace-pre-line leading-relaxed text-slate-600">{a.bio}</p></Section>}
+          {a.bio && <Section title="About" icon={BookOpen}><p className="whitespace-pre-line leading-relaxed text-slate-600 dark:text-slate-300">{a.bio}</p></Section>}
 
           <Section title="How this alumni can help you" icon={HandHeart}>
             <div className="grid gap-3 sm:grid-cols-2">
               {helpItems(a).map(({ label, icon: Icon, on, text }) => (
-                <div key={label} className={`flex items-start gap-3 rounded-lg border p-3 ${on ? 'border-emerald-200 bg-emerald-50/50' : 'border-slate-200 bg-slate-50 opacity-60'}`}>
-                  <div className={`mt-0.5 rounded-md p-1.5 ${on ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}><Icon className="h-4 w-4" /></div>
+                <div key={label} className={`flex items-start gap-3 rounded-lg border p-3 ${on ? 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 opacity-60'}`}>
+                  <div className={`mt-0.5 rounded-md p-1.5 ${on ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}><Icon className="h-4 w-4" /></div>
                   <div>
-                    <p className="flex items-center gap-1.5 text-sm font-bold text-slate-800">{label} {on ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <span className="text-[10px] font-medium uppercase text-slate-400">Not offered</span>}</p>
-                    <p className="text-xs text-slate-500">{text}</p>
+                    <p className="flex items-center gap-1.5 text-sm font-bold text-slate-800 dark:text-slate-100">{label} {on ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <span className="text-[10px] font-medium uppercase text-slate-400">Not offered</span>}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{text}</p>
                   </div>
                 </div>
               ))}
@@ -240,20 +248,20 @@ export default function AlumniProfile() {
           </Section>
 
           <Section title="Experience" icon={Briefcase}>
-            <ol className="relative space-y-6 border-l-2 border-navy-100 pl-6">
+            <ol className="relative space-y-6 border-l-2 border-slate-200 dark:border-slate-800 pl-6">
               <li className="relative">
-                <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-brand-600 ring-2 ring-brand-200" />
-                <p className="font-bold text-slate-900">{a.currentJobTitle}</p>
-                <p className="text-sm font-semibold text-navy-700">{a.currentCompany} · {a.employmentType}</p>
-                <p className="text-xs text-slate-500">Current{a.workLocation ? ` · ${a.workLocation}` : ''}{a.industry ? ` · ${a.industry}` : ''}</p>
+                <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-white dark:border-slate-900 bg-brand-600 ring-2 ring-brand-200 dark:ring-brand-900" />
+                <p className="font-bold text-slate-900 dark:text-slate-100">{a.currentJobTitle}</p>
+                <p className="text-sm font-semibold text-brand-600 dark:text-brand-400">{a.currentCompany} · {a.employmentType}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Current{a.workLocation ? ` · ${a.workLocation}` : ''}{a.industry ? ` · ${a.industry}` : ''}</p>
               </li>
               {experience.map((e, i) => (
                 <li key={i} className="relative">
-                  <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-slate-300" />
-                  <p className="font-bold text-slate-900">{e.title}</p>
-                  <p className="text-sm font-semibold text-slate-600">{e.company}</p>
-                  {(e.startYear || e.endYear) && <p className="text-xs text-slate-500">{e.startYear || ''} – {e.endYear || ''}</p>}
-                  {e.description && <p className="mt-1 text-sm text-slate-600">{e.description}</p>}
+                  <span className="absolute -left-[31px] top-1 h-3.5 w-3.5 rounded-full border-2 border-white dark:border-slate-900 bg-slate-300 dark:bg-slate-700" />
+                  <p className="font-bold text-slate-900 dark:text-slate-100">{e.title}</p>
+                  <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{e.company}</p>
+                  {(e.startYear || e.endYear) && <p className="text-xs text-slate-500 dark:text-slate-400">{e.startYear || ''} – {e.endYear || ''}</p>}
+                  {e.description && <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{e.description}</p>}
                 </li>
               ))}
             </ol>
@@ -298,23 +306,27 @@ export default function AlumniProfile() {
             </dl>
           </section>
 
-          {(a.linkedinUrl || a.githubUrl || a.portfolioUrl || a.email || a.phone) && (
+          {(a.linkedinUrl || a.githubUrl || a.portfolioUrl || a.email || a.linkedinProtected) && (
             <section className="card p-5">
-              <h2 className="mb-3 text-lg font-bold">Links & contact</h2>
+              <h2 className="mb-3 text-lg font-bold text-slate-900 dark:text-slate-100">Links & contact</h2>
               <div className="space-y-2 text-sm">
                 {[
                   { href: a.linkedinUrl, label: 'LinkedIn', icon: Linkedin },
                   { href: a.githubUrl, label: 'GitHub', icon: Github },
                   { href: a.portfolioUrl, label: 'Portfolio', icon: Globe },
                 ].filter((l) => l.href).map(({ href, label, icon: Icon }) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer noopener" className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 font-medium text-slate-700 hover:border-navy-300 hover:bg-navy-50">
-                    <Icon className="h-4 w-4 text-navy-600" /> {label} <ExternalLink className="ml-auto h-3.5 w-3.5 text-slate-400" />
+                  <a key={label} href={href} target="_blank" rel="noreferrer noopener" className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 font-medium text-slate-700 dark:text-slate-200 hover:border-brand-500 hover:bg-brand-50/30 dark:hover:bg-slate-800">
+                    <Icon className="h-4 w-4 text-brand-600 dark:text-brand-400" /> {label} <ExternalLink className="ml-auto h-3.5 w-3.5 text-slate-400" />
                   </a>
                 ))}
-                {a.email && <p className="flex items-center gap-2 text-slate-600"><Mail className="h-4 w-4" /> {a.email}</p>}
-                {a.phone && <p className="flex items-center gap-2 text-slate-600"><Phone className="h-4 w-4" /> {a.phone}</p>}
+                {a.linkedinProtected && (
+                  <p className="flex items-center gap-2 text-xs text-slate-400 italic py-1">
+                    <Lock className="h-3.5 w-3.5 text-slate-400" /> LinkedIn link is private per alumnus preference
+                  </p>
+                )}
+                {a.email && <p className="flex items-center gap-2 text-slate-600 dark:text-slate-300"><Mail className="h-4 w-4" /> {a.email}</p>}
               </div>
-              {!connected && !isOwner && user.role !== 'admin' && <p className="mt-3 text-xs text-slate-400">Email and phone are shared once you're connected.</p>}
+              {!connected && !isOwner && user.role !== 'admin' && <p className="mt-3 text-xs text-slate-400">Institutional email is shared once you're connected.</p>}
             </section>
           )}
 

@@ -8,17 +8,17 @@ import { EmptyState, ErrorState, PageHeader, PageLoader } from '../components/ui
 import { timeAgo } from '../utils/format';
 
 const ICONS = {
-  connection_request: [UserPlus, 'bg-blue-50 text-blue-600'],
-  connection_accepted: [UserCheck, 'bg-emerald-50 text-emerald-600'],
-  connection_rejected: [UserX, 'bg-slate-100 text-slate-500'],
-  mentorship_request: [HandHeart, 'bg-violet-50 text-violet-600'],
-  mentorship_update: [HandHeart, 'bg-violet-50 text-violet-600'],
-  referral_request: [Handshake, 'bg-amber-50 text-amber-600'],
-  referral_update: [Handshake, 'bg-amber-50 text-amber-600'],
-  message: [MessageSquare, 'bg-sky-50 text-sky-600'],
-  job_posted: [BriefcaseBusiness, 'bg-navy-50 text-navy-700'],
-  profile_review: [ShieldCheck, 'bg-orange-50 text-orange-600'],
-  verification: [ShieldCheck, 'bg-emerald-50 text-emerald-600'],
+  connection_request: [UserPlus, 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-300'],
+  connection_accepted: [UserCheck, 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300'],
+  connection_rejected: [UserX, 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'],
+  mentorship_request: [HandHeart, 'bg-violet-50 text-violet-600 dark:bg-violet-950/50 dark:text-violet-300'],
+  mentorship_update: [HandHeart, 'bg-violet-50 text-violet-600 dark:bg-violet-950/50 dark:text-violet-300'],
+  referral_request: [Handshake, 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300'],
+  referral_update: [Handshake, 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300'],
+  message: [MessageSquare, 'bg-sky-50 text-sky-600 dark:bg-sky-950/50 dark:text-sky-300'],
+  job_posted: [BriefcaseBusiness, 'bg-teal-50 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300'],
+  profile_review: [ShieldCheck, 'bg-orange-50 text-orange-600 dark:bg-orange-950/50 dark:text-orange-300'],
+  verification: [ShieldCheck, 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300'],
 };
 
 export default function Notifications() {
@@ -48,18 +48,18 @@ export default function Notifications() {
       {loading && !data ? <PageLoader /> : error ? <ErrorState message={error} onRetry={reload} /> : items.length === 0 ? (
         <EmptyState icon={Bell} title="You're all caught up" message="Connection requests, mentorship updates, messages and new jobs will appear here." />
       ) : (
-        <ul className="card divide-y divide-slate-100 overflow-hidden">
+        <ul className="card divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
           {items.map((n) => {
-            const [Icon, tone] = ICONS[n.type] || [Bell, 'bg-slate-100 text-slate-600'];
+            const [Icon, tone] = ICONS[n.type] || [Bell, 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'];
             const inner = (
-              <div className={`flex items-start gap-3 px-4 py-3.5 transition hover:bg-slate-50 ${n.read ? '' : 'bg-brand-50/40'}`}>
+              <div className={`flex items-start gap-3 px-4 py-3.5 transition hover:bg-slate-50/80 dark:hover:bg-slate-800/60 ${n.read ? '' : 'bg-brand-50/30 dark:bg-teal-950/20'}`}>
                 <div className={`mt-0.5 rounded-lg p-2 ${tone}`}><Icon className="h-4 w-4" /></div>
                 <div className="min-w-0 flex-1">
-                  <p className={`text-sm ${n.read ? 'text-slate-700' : 'font-bold text-slate-900'}`}>{n.title}</p>
-                  {n.body && <p className="truncate text-sm text-slate-500">{n.body}</p>}
-                  <p className="mt-0.5 text-xs text-slate-400">{timeAgo(n.createdAt)}</p>
+                  <p className={`text-sm ${n.read ? 'text-slate-700 dark:text-slate-200' : 'font-bold text-slate-900 dark:text-white'}`}>{n.title}</p>
+                  {n.body && <p className="truncate text-sm text-slate-600 dark:text-slate-300 mt-0.5">{n.body}</p>}
+                  <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-400">{timeAgo(n.createdAt)}</p>
                 </div>
-                {!n.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-600" aria-label="Unread" />}
+                {!n.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-600 dark:bg-brand-400" aria-label="Unread" />}
               </div>
             );
             return (

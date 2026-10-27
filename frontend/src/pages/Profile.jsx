@@ -90,13 +90,13 @@ function AlumniForm() {
   const p = profile || {};
   const exists = !!profile;
   const { form, setForm, bind, check } = useForm({
-    fullName: p.fullName || user.name, profilePhoto: p.profilePhoto || '', email: p.email || user.email, phone: p.phone || '', location: p.location || '',
+    fullName: p.fullName || user.name, profilePhoto: p.profilePhoto || '', email: p.email || user.email, secondaryEmail: p.secondaryEmail || '', location: p.location || '',
     college: p.college || '', department: p.department || '', degree: p.degree || '', graduationYear: p.graduationYear || '', batch: p.batch || '',
     currentCompany: p.currentCompany || '', currentJobTitle: p.currentJobTitle || '', professionalDomain: p.professionalDomain || '',
     experienceYears: p.experienceYears ?? '', industry: p.industry || '', workLocation: p.workLocation || '', employmentType: p.employmentType || 'Full-time',
     skills: join(p.skills), technologies: join(p.technologies),
     experience: p.experience || [],
-    linkedinUrl: p.linkedinUrl || '', githubUrl: p.githubUrl || '', portfolioUrl: p.portfolioUrl || '',
+    linkedinUrl: p.linkedinUrl || '', linkedinVisibility: p.linkedinVisibility || 'private', linkedinConfirmed: !!p.linkedinConfirmed, githubUrl: p.githubUrl || '', portfolioUrl: p.portfolioUrl || '',
     availableForMentorship: !!p.availableForMentorship, availableForReferral: !!p.availableForReferral,
     availableForCareerGuidance: p.availableForCareerGuidance ?? true, availableForStudentQuestions: p.availableForStudentQuestions ?? true,
     preferredMentorshipTopics: join(p.preferredMentorshipTopics), areasOfGuidance: p.areasOfGuidance || [],
@@ -153,8 +153,8 @@ function AlumniForm() {
         <Field label="Full name"><input className="input" required {...bind('fullName')} /></Field>
         <Field label="Profile photo URL"><input className="input" type="url" placeholder="https://…" {...bind('profilePhoto')} /></Field>
         <Field label="Email"><input className="input" type="email" {...bind('email')} /></Field>
-        <Field label="Phone (optional)"><input className="input" {...bind('phone')} /></Field>
-        <Field label="Location" className="sm:col-span-2"><input className="input" placeholder="Bengaluru" {...bind('location')} /></Field>
+        <Field label="Secondary email (optional)"><input className="input" type="email" placeholder="personal@email.com" {...bind('secondaryEmail')} /></Field>
+        <Field label="Location" className="sm:col-span-2"><input className="input" placeholder="Nashik / Pune / Bengaluru" {...bind('location')} /></Field>
       </Card>
 
       <Card title="Education" subtitle="Shown on your public profile so students can verify the connection.">
@@ -192,7 +192,7 @@ function AlumniForm() {
         {form.experience.length === 0 && <p className="text-sm text-slate-400">No previous roles added.</p>}
         <div className="space-y-4">
           {form.experience.map((x, i) => (
-            <div key={i} className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50/60 p-4 sm:grid-cols-2">
+            <div key={i} className="grid gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 p-4 sm:grid-cols-2">
               <Field label="Company"><input className="input" required value={x.company || ''} onChange={(e) => setExp(i, 'company', e.target.value)} /></Field>
               <Field label="Title"><input className="input" required value={x.title || ''} onChange={(e) => setExp(i, 'title', e.target.value)} /></Field>
               <Field label="From (year)"><input className="input" type="number" value={x.startYear || ''} onChange={(e) => setExp(i, 'startYear', e.target.value)} /></Field>
@@ -206,15 +206,34 @@ function AlumniForm() {
         </div>
       </section>
 
-      <Card title="Professional links">
-        <Field label="LinkedIn" className="sm:col-span-2"><input className="input" type="url" placeholder="https://linkedin.com/in/…" {...bind('linkedinUrl')} /></Field>
+      <Card title="Professional links & privacy">
+        <Field label="LinkedIn profile URL" className="sm:col-span-2">
+          <input className="input" type="url" placeholder="https://linkedin.com/in/…" {...bind('linkedinUrl')} />
+        </Field>
+
+        <Field label="LinkedIn visibility setting">
+          <select className="input" {...bind('linkedinVisibility')}>
+            <option value="private">Private (hidden)</option>
+            <option value="verified_alumni">Verified alumni only</option>
+            <option value="verified_students_and_alumni">Verified students and alumni</option>
+            <option value="all_authenticated">All authenticated users</option>
+          </select>
+        </Field>
+
+        <div className="flex items-center gap-2 pt-6">
+          <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+            <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-teal-600" {...check('linkedinConfirmed')} />
+            Confirm and enable LinkedIn profile sharing
+          </label>
+        </div>
+
         <Field label="GitHub"><input className="input" type="url" {...bind('githubUrl')} /></Field>
         <Field label="Portfolio"><input className="input" type="url" {...bind('portfolioUrl')} /></Field>
       </Card>
 
       <section className="card p-5 sm:p-6">
-        <h2 className="text-lg font-bold">How can you help students?</h2>
-        <p className="mb-4 text-sm text-slate-500">Students see this on your profile and use it to decide how to reach out.</p>
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">How can you help students?</h2>
+        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">Students see this on your profile and use it to decide how to reach out.</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {[
             ['availableForMentorship', 'Available for mentorship'],
@@ -222,8 +241,8 @@ function AlumniForm() {
             ['availableForCareerGuidance', 'Available for career guidance'],
             ['availableForStudentQuestions', 'Open to student questions (direct messages)'],
           ].map(([k, label]) => (
-            <label key={k} className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-medium hover:bg-slate-50">
-              <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-navy-700" {...check(k)} /> {label}
+            <label key={k} className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-700 p-3 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200">
+              <input type="checkbox" className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-brand-600 focus:ring-brand-500" {...check(k)} /> {label}
             </label>
           ))}
         </div>
@@ -231,7 +250,7 @@ function AlumniForm() {
           <span className="label">Areas of guidance</span>
           <div className="flex flex-wrap gap-2">
             {HELP_AREAS.map((a) => (
-              <button type="button" key={a} onClick={() => toggleArea(a)} aria-pressed={form.areasOfGuidance.includes(a)} className={`chip !px-3 !py-1.5 text-sm ${form.areasOfGuidance.includes(a) ? '!bg-navy-800 !text-white' : 'hover:bg-navy-100'}`}>{a}</button>
+              <button type="button" key={a} onClick={() => toggleArea(a)} aria-pressed={form.areasOfGuidance.includes(a)} className={`chip !px-3 !py-1.5 text-sm ${form.areasOfGuidance.includes(a) ? '!bg-brand-600 !text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>{a}</button>
             ))}
           </div>
         </div>
@@ -252,12 +271,70 @@ function AlumniForm() {
   );
 }
 
+/* ---------------- Teacher ---------------- */
+function TeacherForm() {
+  const { profile, setProfile } = useAuth();
+  const toast = useToast();
+  const p = profile || {};
+  const { form, bind } = useForm({
+    fullName: p.fullName || '',
+    department: p.department || 'Computer Engineering',
+    designation: p.designation || 'Associate Professor & Capstone Project Guide',
+    cabin: p.cabin || 'Dept of Computer Engg, 3rd Floor, Room 304',
+    officeHours: p.officeHours || 'Monday - Friday, 2:30 PM - 5:00 PM',
+    specialization: join(p.specialization),
+  });
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const { data } = await api.put('/teacher/profile', {
+        ...form,
+        specialization: csv(form.specialization),
+      });
+      setProfile(data.data);
+      toast.success('Faculty profile saved successfully');
+    } catch (err) {
+      toast.error(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="space-y-6">
+      <Card title="Faculty Information" subtitle="Your official KKWAGH faculty information visible to students and guides.">
+        <Field label="Full Name *"><input className="input" required {...bind('fullName')} /></Field>
+        <Field label="Academic Department"><input className="input" required {...bind('department')} /></Field>
+        <Field label="Academic Designation"><input className="input" required {...bind('designation')} /></Field>
+        <Field label="Faculty Cabin / Office Location"><input className="input" {...bind('cabin')} /></Field>
+        <Field label="Office / Consultation Hours"><input className="input" {...bind('officeHours')} /></Field>
+        <Field label="Areas of Research & Specialization" hint="Comma separated"><input className="input" placeholder="Distributed Systems, Cloud Architecture, ML" {...bind('specialization')} /></Field>
+      </Card>
+      <div className="flex justify-end">
+        <button className="btn-primary px-6" disabled={busy}>
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save changes
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export default function Profile() {
   const { user } = useAuth();
+  const subtitle =
+    user?.role === 'student'
+      ? 'Tell alumni about your skills and goals.'
+      : user?.role === 'teacher'
+      ? 'Manage your faculty profile and consultation details.'
+      : 'Your professional profile as students see it.';
+
   return (
     <div className="page max-w-4xl">
-      <PageHeader title="My Profile" subtitle={user.role === 'student' ? 'Tell alumni about your skills and goals.' : 'Your professional profile as students see it.'} />
-      {user.role === 'student' ? <StudentForm /> : <AlumniForm />}
+      <PageHeader title="My Profile" subtitle={subtitle} />
+      {user?.role === 'student' ? <StudentForm /> : user?.role === 'teacher' ? <TeacherForm /> : <AlumniForm />}
     </div>
   );
 }

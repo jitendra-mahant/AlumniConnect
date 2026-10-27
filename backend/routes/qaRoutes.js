@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const c = require('../controllers/qaController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, requireVerified } = require('../middleware/auth');
 
-router.use(protect);
+router.use(protect, requireVerified);
 
 // Questions
 router.get('/questions', c.listQuestions);

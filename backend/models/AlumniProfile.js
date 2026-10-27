@@ -15,33 +15,47 @@ const experienceSchema = new Schema(
 
 const alumniProfileSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: false,
+      default: undefined,
+      index: {
+        unique: true,
+        partialFilterExpression: { user: { $type: 'objectId' } },
+      },
+    },
 
     // Personal
     fullName: { type: String, required: true, trim: true, index: true },
     profilePhoto: { type: String, trim: true, default: '' },
     email: { type: String, trim: true, lowercase: true },
-    phone: { type: String, trim: true },
+    secondaryEmail: { type: String, trim: true, lowercase: true },
     location: { type: String, trim: true, index: true },
 
     // Academic
-    college: { type: String, trim: true, required: true },
-    department: { type: String, trim: true, required: true, index: true },
-    degree: { type: String, trim: true, required: true },
-    graduationYear: { type: Number, required: true, min: 1950, max: 2100, index: true },
-    batch: { type: String, trim: true },
+    college: {
+      type: String,
+      trim: true,
+      default: 'K.K. Wagh Institute of Engineering Education & Research (KKWAGH)',
+    },
+    department: { type: String, trim: true, default: 'Computer Engineering', index: true },
+    degree: { type: String, trim: true, default: 'B.E.' },
+    graduationYear: { type: Number, default: 2022, min: 1950, max: 2100, index: true },
+    batch: { type: String, trim: true, default: '2022' },
 
     // Professional
-    currentCompany: { type: String, trim: true, required: true, index: true },
-    currentJobTitle: { type: String, trim: true, required: true },
-    professionalDomain: { type: String, trim: true, required: true, index: true },
+    currentCompany: { type: String, trim: true, default: 'Company Not Specified', index: true },
+    companyNormalized: { type: String, trim: true, index: true },
+    currentJobTitle: { type: String, trim: true, default: 'Role Not Specified' },
+    professionalDomain: { type: String, trim: true, default: 'Technology', index: true },
     experienceYears: { type: Number, min: 0, max: 60, default: 0, index: true },
     previousCompanies: [{ type: String, trim: true }],
     previousJobTitles: [{ type: String, trim: true }],
     experience: [experienceSchema], // structured previous experience for the profile page
     skills: [{ type: String, trim: true }],
     technologies: [{ type: String, trim: true }],
-    industry: { type: String, trim: true, index: true },
+    industry: { type: String, trim: true, default: 'Information Technology', index: true },
     workLocation: { type: String, trim: true },
     employmentType: {
       type: String,
@@ -49,8 +63,17 @@ const alumniProfileSchema = new Schema(
       default: 'Full-time',
     },
 
-    // Professional links
+    // Professional links & Privacy
     linkedinUrl: { type: String, trim: true },
+    linkedinVisibility: {
+      type: String,
+      enum: ['private', 'verified_alumni', 'verified_students_and_alumni', 'all_authenticated'],
+      default: 'private',
+      index: true,
+    },
+    linkedinConfirmed: { type: Boolean, default: false },
+    importSource: { type: String, default: 'alumni_database_2022' },
+    importBatch: { type: String, default: '2022' },
     githubUrl: { type: String, trim: true },
     portfolioUrl: { type: String, trim: true },
 
@@ -97,5 +120,15 @@ alumniProfileSchema.index(
 );
 alumniProfileSchema.index({ skills: 1 });
 alumniProfileSchema.index({ technologies: 1 });
+
+alumniProfileSchema.set('toJSON', {
+  transform: (_doc, ret) => {
+    delete ret.phone;
+    delete ret.secondary_phone;
+    delete ret.secondaryPhone;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 module.exports = mongoose.model('AlumniProfile', alumniProfileSchema);

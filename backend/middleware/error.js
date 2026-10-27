@@ -18,12 +18,23 @@ const errorHandler = (err, _req, res, _next) => {
   } else if (err.code === 11000) {
     status = 409;
     const field = Object.keys(err.keyPattern || {})[0] || 'value';
-    message = field === 'email' ? 'An account with this email already exists' : `Duplicate ${field}`;
+    if (field === 'email') {
+      message = 'An account with this institutional email already exists. Please log in or reset your password.';
+      details = { code: 'DUPLICATE_EMAIL' };
+    } else {
+      message = `Duplicate ${field}`;
+    }
   }
 
   if (status >= 500) console.error('[error]', err);
 
-  res.status(status).json({ success: false, message, ...(details ? { details } : {}) });
+  const extra = typeof details === 'object' && !Array.isArray(details) ? details : {};
+  res.status(status).json({
+    success: false,
+    message,
+    ...extra,
+    ...(details ? { details } : {}),
+  });
 };
 
 module.exports = { notFound, errorHandler };

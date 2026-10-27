@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const c = require('../controllers/connectionController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, requireVerified } = require('../middleware/auth');
 
-router.use(protect, authorize('student', 'alumni'));
+router.use(protect, requireVerified, authorize('student', 'alumni'));
 router.post('/', authorize('student'), c.createConnection);
 router.get('/', c.listConnections);
 router.get('/path/:userId', c.connectionPath);

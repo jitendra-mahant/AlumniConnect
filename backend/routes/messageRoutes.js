@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const c = require('../controllers/messageController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, requireVerified } = require('../middleware/auth');
 
-router.use(protect, authorize('student', 'alumni'));
+router.use(protect, requireVerified, authorize('student', 'alumni', 'teacher'));
 router.post('/', c.sendMessage);
 router.get('/conversations', c.conversations);
 router.get('/:userId', c.thread);

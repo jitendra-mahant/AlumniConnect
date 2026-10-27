@@ -31,7 +31,7 @@ function isPortOpen(port, host = '127.0.0.1', timeout = 1000) {
 
 (async () => {
   let mongod = null;
-  let uri = 'mongodb://127.0.0.1:27018/alumniconnect';
+  let uri = 'mongodb://127.0.0.1:27018/db_alumini_years';
 
   const running = await isPortOpen(27018);
   if (running) {
@@ -43,7 +43,7 @@ function isPortOpen(port, host = '127.0.0.1', timeout = 1000) {
     mongod = await MongoMemoryServer.create({
       instance: { dbPath, storageEngine: 'wiredTiger', port: 27018 },
     });
-    uri = `${mongod.getUri()}alumniconnect`;
+    uri = `${mongod.getUri()}db_alumini_years`;
   }
 
   process.env.MONGODB_URI = uri;
@@ -52,6 +52,7 @@ function isPortOpen(port, host = '127.0.0.1', timeout = 1000) {
   const connectDB = require('../config/db');
   const User = require('../models/User');
   const { seedDatabase } = require('../seed/seed');
+  const { bootstrapPrimaryAdmin } = require('../config/bootstrap');
   const { createApp } = require('../server');
 
   await connectDB(uri);
@@ -59,6 +60,7 @@ function isPortOpen(port, host = '127.0.0.1', timeout = 1000) {
     console.log('[dev:memory] Empty database - seeding sample data...');
     await seedDatabase();
   }
+  await bootstrapPrimaryAdmin();
 
   const server = createApp().listen(env.port, () =>
     console.log(`[server] AlumniConnect API running on http://localhost:${env.port}`)

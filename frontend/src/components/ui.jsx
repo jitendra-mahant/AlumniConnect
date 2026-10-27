@@ -94,26 +94,26 @@ export function Avatar({ name, src, size = 'md', className = '' }) {
 
 export function VerifiedBadge({ className = '' }) {
   return (
-    <span className={`badge bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 ${className}`}>
-      <BadgeCheck className="h-3.5 w-3.5" /> Verified Alumni
+    <span className={`badge bg-teal-50 text-teal-700 ring-1 ring-teal-200/80 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-800/60 ${className}`}>
+      <BadgeCheck className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" /> Verified Alumni
     </span>
   );
 }
 
 const STATUS_STYLES = {
-  pending: 'bg-amber-50 text-amber-700 ring-amber-200',
-  accepted: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  verified: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  referred: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  active: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  completed: 'bg-blue-50 text-blue-700 ring-blue-200',
-  resolved: 'bg-blue-50 text-blue-700 ring-blue-200',
-  rejected: 'bg-red-50 text-red-700 ring-red-200',
-  suspended: 'bg-red-50 text-red-700 ring-red-200',
-  open: 'bg-amber-50 text-amber-700 ring-amber-200',
-  closed: 'bg-slate-100 text-slate-600 ring-slate-200',
-  cancelled: 'bg-slate-100 text-slate-600 ring-slate-200',
-  dismissed: 'bg-slate-100 text-slate-600 ring-slate-200',
+  pending: 'bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-800/60',
+  accepted: 'bg-teal-50 text-teal-700 ring-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-800/60',
+  verified: 'bg-teal-50 text-teal-700 ring-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-800/60',
+  referred: 'bg-teal-50 text-teal-700 ring-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-800/60',
+  active: 'bg-teal-50 text-teal-700 ring-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:ring-teal-800/60',
+  completed: 'bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:ring-sky-800/60',
+  resolved: 'bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:ring-sky-800/60',
+  rejected: 'bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:ring-rose-800/60',
+  suspended: 'bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:ring-rose-800/60',
+  open: 'bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-800/60',
+  closed: 'bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700',
+  cancelled: 'bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700',
+  dismissed: 'bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-700',
 };
 
 export function StatusBadge({ status }) {
@@ -137,18 +137,18 @@ export function Modal({ open, onClose, title, children, footer, wide = false }) 
     <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={title}>
       <div className="absolute inset-0 bg-navy-950/50 backdrop-blur-sm" onClick={onClose} />
       <div
-        className={`relative flex max-h-[92vh] w-full animate-fade-up flex-col rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl ${
+        className={`relative flex max-h-[92vh] w-full animate-fade-up flex-col rounded-t-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl sm:rounded-2xl ${
           wide ? 'sm:max-w-2xl' : 'sm:max-w-lg'
         }`}
       >
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-          <h2 className="text-lg font-bold">{title}</h2>
-          <button onClick={onClose} aria-label="Close" className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-5 py-4">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h2>
+          <button onClick={onClose} aria-label="Close" className="rounded-md p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200">
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="overflow-y-auto px-5 py-4">{children}</div>
-        {footer && <div className="flex justify-end gap-2 border-t border-slate-200 bg-slate-50 px-5 py-3 sm:rounded-b-2xl">{footer}</div>}
+        <div className="overflow-y-auto px-5 py-4 text-slate-700 dark:text-slate-200">{children}</div>
+        {footer && <div className="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-5 py-3 sm:rounded-b-2xl">{footer}</div>}
       </div>
     </div>
   );
@@ -185,8 +185,8 @@ export function PageHeader({ title, subtitle, action }) {
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-slate-500 sm:text-base">{subtitle}</p>}
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">{title}</h1>
+        {subtitle && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 sm:text-base">{subtitle}</p>}
       </div>
       {action}
     </div>
@@ -195,18 +195,20 @@ export function PageHeader({ title, subtitle, action }) {
 
 export function Tabs({ tabs, value, onChange }) {
   return (
-    <div className="mb-5 flex gap-1 overflow-x-auto rounded-lg bg-slate-100 p-1">
+    <div className="mb-5 flex gap-1 overflow-x-auto rounded-lg bg-slate-100 dark:bg-slate-800/80 p-1">
       {tabs.map((t) => (
         <button
           key={t.value}
           onClick={() => onChange(t.value)}
           className={`whitespace-nowrap rounded-md px-4 py-1.5 text-sm font-semibold transition ${
-            value === t.value ? 'bg-white text-navy-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+            value === t.value
+              ? 'bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
           }`}
         >
           {t.label}
           {t.count !== undefined && t.count > 0 && (
-            <span className="ml-2 rounded-full bg-navy-800 px-1.5 py-0.5 text-[10px] text-white">{t.count}</span>
+            <span className="ml-2 rounded-full bg-teal-600 dark:bg-teal-500 px-1.5 py-0.5 text-[10px] text-white">{t.count}</span>
           )}
         </button>
       ))}

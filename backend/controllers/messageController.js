@@ -15,8 +15,16 @@ const { getDisplayMap } = require('../utils/people');
  *  - anyone may reply once the other person has messaged them.
  */
 async function canMessage(sender, recipient) {
+  if (!sender || !recipient) return false;
   if (sender.role === 'admin' || recipient.role === 'admin') return false;
-  if (sender.role === recipient.role) return false;
+
+  // Teacher <-> Student communication (project guidance & PBL mentoring)
+  if (
+    (sender.role === 'teacher' && recipient.role === 'student') ||
+    (sender.role === 'student' && recipient.role === 'teacher')
+  ) {
+    return true;
+  }
 
   const connected = await Connection.exists({
     status: 'accepted',
@@ -48,12 +56,29 @@ exports.sendMessage = asyncHandler(async (req, res) => {
     throw new ApiError(403, 'You cannot message this user yet. Send a connection request first.');
   }
 
+  const conversationId = Message.makeConversationId(req.user._id, recipient._id);
   const message = await Message.create({
-    conversationId: Message.makeConversationId(req.user._id, recipient._id),
+    conversationId,
     sender: req.user._id,
     recipient: recipient._id,
     text,
   });
+
+  // Broadcast real-time message to conversation and user rooms
+  try {
+    const { getIO } = require('../socket');
+    const io = getIO();
+    if (io) {
+      io.to(`conversation:${conversationId}`).emit('new_message', message);
+      io.to(`user:${String(recipient._id)}`).emit('new_message_alert', {
+        conversationId,
+        message,
+        sender: { _id: req.user._id, name: req.user.name },
+      });
+    }
+  } catch (_socketErr) {
+    // Socket server not available
+  }
 
   await notify(recipient._id, {
     type: 'message',

@@ -47,29 +47,29 @@ export default function RequestList({ kind, items, role, onChange }) {
                 <Avatar name={person.name} src={person.photo} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-display font-bold text-navy-950">{title}</h3>
+                    <h3 className="font-display font-bold text-slate-900 dark:text-white">{title}</h3>
                     <StatusBadge status={it.status} />
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
                     {role === 'student' ? 'To' : 'From'}{' '}
-                    {person.profileId ? <Link to={`/alumni/${person.profileId}`} className="font-semibold text-navy-700 hover:underline">{person.name}</Link> : <b>{person.name}</b>}
-                    {person.headline && <span className="text-slate-400"> · {person.headline}</span>}
+                    {person.profileId ? <Link to={`/alumni/${person.profileId}`} className="font-semibold text-brand-700 dark:text-brand-400 hover:underline">{person.name}</Link> : <b>{person.name}</b>}
+                    {person.headline && <span className="text-slate-400 dark:text-slate-500"> · {person.headline}</span>}
                   </p>
-                  <p className="text-xs text-slate-400">{timeAgo(it.createdAt)}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">{timeAgo(it.createdAt)}</p>
                 </div>
               </div>
 
-              <p className="mt-3 whitespace-pre-line rounded-lg bg-slate-50 p-3 text-sm text-slate-700">{it.message}</p>
-              {it.goals && <p className="mt-2 text-sm text-slate-600"><b>Goals:</b> {it.goals}</p>}
+              <p className="mt-3 whitespace-pre-line rounded-lg bg-slate-50 dark:bg-slate-800/80 p-3 text-sm text-slate-700 dark:text-slate-200 border border-slate-100 dark:border-slate-700">{it.message}</p>
+              {it.goals && <p className="mt-2 text-sm text-slate-600 dark:text-slate-300"><b>Goals:</b> {it.goals}</p>}
               {it.resumeUrl && (
-                <a href={it.resumeUrl} target="_blank" rel="noreferrer noopener" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline">
+                <a href={it.resumeUrl} target="_blank" rel="noreferrer noopener" className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 dark:text-brand-400 hover:underline">
                   View resume <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               )}
               {it.response && (
-                <div className="mt-3 rounded-lg border border-navy-100 bg-navy-50/60 p-3 text-sm">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-navy-600">{role === 'student' ? 'Their response' : 'Your response'}</p>
-                  <p className="mt-1 text-slate-700">{it.response}</p>
+                <div className="mt-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-3 text-sm">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">{role === 'student' ? 'Their response' : 'Your response'}</p>
+                  <p className="mt-1 text-slate-700 dark:text-slate-200">{it.response}</p>
                 </div>
               )}
 

@@ -1,0 +1,776 @@
+[{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1ce7"
+  },
+  "name": "Abhishek Badgujar",
+  "phone": {
+    "$numberLong": "7249266656"
+  },
+  "email": "badgujarabhishek@gmail.com",
+  "company": "Aziro Software Pvt Ltd",
+  "linkedin": "https://www.linkedin.com/in/abhishek-badgujar/",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1ce8"
+  },
+  "name": "Gade Aditya Balasaheb",
+  "phone": {
+    "$numberLong": "9767314922"
+  },
+  "secondary_phone": {
+    "$numberLong": "9422266466"
+  },
+  "email": "gadeaditya02@gmail.com",
+  "role": "Salesforce Developer",
+  "linkedin": "https://www.linkedin.com/in/adityagade",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1ce9"
+  },
+  "name": "Mundhe Aditya Madhav",
+  "phone": {
+    "$numberLong": "7767972212"
+  },
+  "secondary_phone": {
+    "$numberLong": "9960680821"
+  },
+  "email": "cooladityamundhe@gmail.com",
+  "secondary_email": "mmundhe9@gmail.com",
+  "company": "Securly",
+  "linkedin": "https://www.linkedin.com/in/aditya-mundhe-b77997224",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cea"
+  },
+  "name": "Hinge Akash Narhar",
+  "phone": {
+    "$numberLong": "7620256749"
+  },
+  "secondary_phone": {
+    "$numberLong": "9822268320"
+  },
+  "email": "akashhinge2000@gmail.com",
+  "secondary_email": "advhinge7@gmail.com",
+  "company": "Infosys",
+  "linkedin": "https://www.linkedin.com/in/akash-hinge-001845190",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1ceb"
+  },
+  "name": "Kadlag Akash Ramdas",
+  "phone": {
+    "$numberLong": "7796043133"
+  },
+  "secondary_phone": {
+    "$numberLong": "9822976890"
+  },
+  "email": "akashkadlag8@gmail.com",
+  "secondary_email": "ramdaskadlag002@gmail.com",
+  "company": "FiniQ Consulting",
+  "linkedin": "https://www.linkedin.com/in/akash-kadlag-2292aa200",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cec"
+  },
+  "name": "Bhadke Amit Arjun",
+  "phone": {
+    "$numberLong": "7066608669"
+  },
+  "secondary_phone": {
+    "$numberLong": "9226764788"
+  },
+  "email": "amitbhadke786@gmail.com",
+  "company": "Seagate",
+  "role": "Data Analyst",
+  "linkedin": "https://www.linkedin.com/in/amit-bhadke-7b800b202",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1ced"
+  },
+  "name": "Deshmukh Amod Pravin",
+  "phone": {
+    "$numberLong": "7350525479"
+  },
+  "secondary_phone": {
+    "$numberLong": "9860888089"
+  },
+  "email": "amoddeshmukh01234@gmail.com",
+  "secondary_email": "pravinghorpade24@gmail.com",
+  "company": "Sidhman",
+  "role": "Flutter Developer (Mobile App Dev)",
+  "linkedin": "https://www.linkedin.com/in/amod-deshmukh-a11b82287",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cee"
+  },
+  "name": "Deochake Anisha Swapnil",
+  "phone": {
+    "$numberLong": "9850784288"
+  },
+  "secondary_phone": {
+    "$numberLong": "9225114288"
+  },
+  "email": "anishadeochake14@gmail.com",
+  "secondary_email": "swapnildeochake21078@gmail.com",
+  "company": "TCS",
+  "role": "AI Engineer",
+  "linkedin": "https://www.linkedin.com/in/anisha-deochake",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cef"
+  },
+  "name": "Patil Ankit Yashwant",
+  "phone": {
+    "$numberLong": "7620262940"
+  },
+  "secondary_phone": {
+    "$numberLong": "9822615940"
+  },
+  "email": "ankitpatil3003@gmail.com",
+  "secondary_email": "yashg.patil@gmail.com",
+  "company": "BNY",
+  "role": "AI/ML Engineer (NYC)",
+  "linkedin": "https://www.linkedin.com/in/ankit-patil-aiml",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf0"
+  },
+  "name": "Thosar Atharva Sunil",
+  "phone": {
+    "$numberLong": "9561298441"
+  },
+  "secondary_phone": {
+    "$numberLong": "9921270628"
+  },
+  "email": "atharvathosar3@gmail.com",
+  "secondary_email": "sunilthosar67@gmail.com",
+  "company": "Zepto",
+  "role": "Inventory Manager, DH Operations",
+  "linkedin": "https://www.linkedin.com/in/atharva-thosar-bb46951b4",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf1"
+  },
+  "name": "Patil Bhagyoday Maruti",
+  "phone": {
+    "$numberLong": "9156886872"
+  },
+  "secondary_phone": {
+    "$numberLong": "9422075979"
+  },
+  "email": "bhagyoday.riverdale@gmail.com",
+  "company": "Montran India",
+  "role": "Assistant Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/atharva-thosar-bb46951b4",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf2"
+  },
+  "name": "Shingate Dheeraj Vilas",
+  "phone": {
+    "$numberLong": "7775825857"
+  },
+  "secondary_phone": {
+    "$numberLong": "9545829167"
+  },
+  "email": "dheerajshingate0816@gmail.com",
+  "company": "Persistent Systems",
+  "role": "Lead Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/dheeraj-shingate-4a994516b",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf3"
+  },
+  "name": "Gourangni Bhola",
+  "phone": {
+    "$numberLong": "9149609978"
+  },
+  "secondary_phone": {
+    "$numberLong": "7006452175"
+  },
+  "email": "gourangnibhola10288@gmail.com",
+  "secondary_email": "bholarajeshwar@gmail.com",
+  "company": "General Aeronautics Pvt Ltd",
+  "role": "Marketing Manager",
+  "linkedin": "https://www.linkedin.com/in/gourangni-bhola-24ba43214",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf4"
+  },
+  "name": "Bhattacharjee Irene Joydeep",
+  "phone": {
+    "$numberLong": "8975541450"
+  },
+  "secondary_phone": {
+    "$numberLong": "9764000706"
+  },
+  "secondary_email": "joy_sumana@hotmail.com",
+  "company": "VYUHAA Med",
+  "role": "Product Management Intern",
+  "linkedin": "https://www.linkedin.com/in/irene-bhattacharjee",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf5"
+  },
+  "name": "Rajole Jayesh Vishnu",
+  "phone": {
+    "$numberLong": "9923545649"
+  },
+  "secondary_phone": {
+    "$numberLong": "9881564035"
+  },
+  "email": "jayeshrajole1456@gmail.com",
+  "secondary_email": "vishnurajole98@gmail.com",
+  "company": "Jio Platforms Limited (JPL)",
+  "role": "iOS Developer",
+  "linkedin": "https://www.linkedin.com/in/jayeshrajole",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf6"
+  },
+  "name": "Saudagar Karishma Amol",
+  "phone": {
+    "$numberLong": "9921191238"
+  },
+  "secondary_phone": {
+    "$numberLong": "9823380000"
+  },
+  "company": "Wipro",
+  "role": "Project Engineer",
+  "linkedin": "https://www.linkedin.com/in/karishma-saudagar-836529213",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf7"
+  },
+  "name": "Patekar Komal Sanjay",
+  "phone": {
+    "$numberLong": "7066608434"
+  },
+  "secondary_phone": {
+    "$numberLong": "7767037813"
+  },
+  "email": "komalpatekar09@gmail.com",
+  "secondary_email": "sumanartvcard@gmail.com",
+  "company": "Vegyan Systems",
+  "role": "Senior Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/komal-patekar-a2b764187",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf8"
+  },
+  "name": "Kapse Latesh Devidas",
+  "phone": {
+    "$numberLong": "7744002800"
+  },
+  "secondary_phone": {
+    "$numberLong": "9637522588"
+  },
+  "email": "lateshkapse131@gmail.com",
+  "company": "NVIDIA",
+  "role": "SWQA Test Developer",
+  "linkedin": "https://www.linkedin.com/in/latesh-kapse-b80591328",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cf9"
+  },
+  "name": "Jadhav Malhar Deelip",
+  "phone": {
+    "$numberLong": "9767446751"
+  },
+  "secondary_phone": {
+    "$numberLong": "9850436291"
+  },
+  "email": "malharjadhav8999@gmail.com",
+  "secondary_email": "jdjmalhar99@gmail.com",
+  "company": "ConnectWise",
+  "role": "Senior Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/malhar-jadhav-137b2a215",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cfa"
+  },
+  "name": "Mali Nachiket Mohan",
+  "phone": {
+    "$numberLong": "7768952896"
+  },
+  "email": "nachiketm1a2l3i4@gmail.com",
+  "company": "Altimetrik",
+  "role": "Associate Engineer, Product and Platform Engineering",
+  "linkedin": "https://www.linkedin.com/in/nachiketmali36",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cfb"
+  },
+  "name": "Badgujar Pranali Pravin",
+  "phone": {
+    "$numberLong": "9765787954"
+  },
+  "email": "badgujar.pranali@gmail.com",
+  "company": "Infosys",
+  "role": "Associate Consultant",
+  "linkedin": "https://www.linkedin.com/in/pranalibadgujar",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cfc"
+  },
+  "name": "Baviskar Pranjali Arun",
+  "phone": {
+    "$numberLong": "7057508648"
+  },
+  "email": "pranjalibaviskar12@gmail.com",
+  "company": "Persistent Systems",
+  "role": "Lead Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/pranjali-baviskar-192299251",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cfd"
+  },
+  "name": "Sawant Prasad Satish",
+  "phone": {
+    "$numberLong": "7038198298"
+  },
+  "email": "sawantprasad518@gmail.com",
+  "company": "PayPal",
+  "role": "Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/prasadsawant518",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cfe"
+  },
+  "name": "Godse Rajshree Ashok",
+  "phone": {
+    "$numberLong": "8788961254"
+  },
+  "email": "godserajshree786@gmail.com",
+  "company": "Bosch Global Software Technologies",
+  "role": "Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/rajshreegodse18",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1cff"
+  },
+  "name": "Khamkar Rohit Shivaji",
+  "phone": {
+    "$numberLong": "7719932435"
+  },
+  "email": "rohitkhamkar12042000@gmail.com",
+  "company": "Persistent Systems",
+  "role": "Lead Software Developer",
+  "linkedin": "https://www.linkedin.com/in/rohit-khamkar23",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d00"
+  },
+  "name": "Desale Roshan Vilas",
+  "phone": {
+    "$numberLong": "9420363014"
+  },
+  "email": "roshandesale217@gmail.com",
+  "company": "Infosys",
+  "role": "Digital Specialist Engineer",
+  "linkedin": "https://www.linkedin.com/in/roshan-desale",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d01"
+  },
+  "name": "Rojekar Rutik Pramod",
+  "phone": {
+    "$numberLong": "7517257135"
+  },
+  "email": "rutik2912@gmail.com",
+  "company": "eGain Corporation",
+  "role": "Software Engineer 1",
+  "linkedin": "https://www.linkedin.com/in/rutik-rojekar",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d02"
+  },
+  "name": "Deshmukh Rutuja Prashant",
+  "phone": {
+    "$numberLong": "9423279178"
+  },
+  "email": "pashdesh98@gmail.com",
+  "company": "SGX FX",
+  "role": "Product Management Intern",
+  "linkedin": "https://www.linkedin.com/in/rutuja-deshmukh-rd",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d03"
+  },
+  "name": "Ugale Rutuja Vinayak",
+  "phone": {
+    "$numberLong": "9370295568"
+  },
+  "email": "rutujaugale48@gmail.com",
+  "company": "Vegayan Systems",
+  "role": "Senior Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/rutuja-ugale",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d04"
+  },
+  "name": "Pande Shreyas Prashantkumar",
+  "phone": {
+    "$numberLong": "8308662741"
+  },
+  "email": "s.pande16122000@gmail.com",
+  "company": "Siemens",
+  "role": "Generative AI Solutions Engineer",
+  "linkedin": "https://www.linkedin.com/in/shreyas-pande",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d05"
+  },
+  "name": "Tadas Shubham Ravindra",
+  "phone": {
+    "$numberLong": "7745090172"
+  },
+  "email": "shubhamtadas828@gmail.com",
+  "company": "Dassault Systemes",
+  "role": "Software Engineering Specialist",
+  "linkedin": "https://www.linkedin.com/in/srtadas",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d06"
+  },
+  "name": "Jagdale Shweta Ankush",
+  "phone": {
+    "$numberLong": "8805597623"
+  },
+  "email": "jagdaleshweta8610@gmail.com",
+  "company": "Persistent Systems",
+  "role": "Lead Software Engineer (Data Engineer)",
+  "linkedin": "https://www.linkedin.com/in/shweta-jagdale-dataengineer",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d07"
+  },
+  "name": "Sahare Siddhant Amol",
+  "phone": {
+    "$numberLong": "9503562538"
+  },
+  "email": "siddhants8019@gmail.com",
+  "company": "BrowserStack",
+  "role": "Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/siddhantsahare",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d08"
+  },
+  "name": "Sarode Sohil Kiran",
+  "phone": {
+    "$numberLong": "8087263077"
+  },
+  "email": "sohilsarode5@gmail.com",
+  "company": "Lowe's India",
+  "role": "Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/sohil-sarode",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d09"
+  },
+  "name": "Srivastava Sumira Mukul",
+  "phone": {
+    "$numberLong": "8329069295"
+  },
+  "email": "sumirasrivastava13@gmail.com",
+  "company": "ICICI Lombard",
+  "role": "Marketing Management Trainee",
+  "linkedin": "https://www.linkedin.com/in/sumira-srivastava",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d0a"
+  },
+  "name": "Bapat Vidit Vivek",
+  "phone": {
+    "$numberLong": "7038014936"
+  },
+  "email": "viditbapat@gmail.com",
+  "company": "FinIQ",
+  "role": "Full-time",
+  "linkedin": "https://www.linkedin.com/in/vidit-bapat",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d0b"
+  },
+  "name": "Gade Yash Pandit",
+  "phone": {
+    "$numberLong": "7887912830"
+  },
+  "email": "yashgade487@gmail.com",
+  "company": "NVIDIA",
+  "role": "Tool Developer Engineer",
+  "linkedin": "https://www.linkedin.com/in/yash-gade-18724b1b3",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d0c"
+  },
+  "name": "Tak Aarti Kailas",
+  "phone": {
+    "$numberLong": "8830780193"
+  },
+  "email": "takaarti10@gmail.com",
+  "company": "IBM",
+  "role": "Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/aarti-tak-a92b35165",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d0d"
+  },
+  "name": "Sutaria Aayushi",
+  "phone": {
+    "$numberLong": "9039183390"
+  },
+  "email": "aayushisutaria017@gmail.com",
+  "company": "Netcracker Technology",
+  "role": "Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/aayushi-as",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d0e"
+  },
+  "name": "Patil Abhishek Jayawantrao",
+  "phone": {
+    "$numberLong": "8149581429"
+  },
+  "email": "abhishekpatil20082000@gmail.com",
+  "company": "NVIDIA",
+  "role": "Tools Development Engineer",
+  "linkedin": "https://www.linkedin.com/in/abhishek-patil-429769191",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d0f"
+  },
+  "name": "Shukla Adarsh Ashwini",
+  "phone": {
+    "$numberLong": "9975247013"
+  },
+  "email": "adarshashwinshukla@gmail.com",
+  "company": "Remiges Technologies Pvt Ltd",
+  "role": "Application Engineer",
+  "linkedin": "https://www.linkedin.com/in/adarsh-shukla-6537a31b4",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d10"
+  },
+  "name": "Gondhalekar Adwait Atul",
+  "phone": {
+    "$numberLong": "7264872960"
+  },
+  "email": "adwaitgondhalekar@gmail.com",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d11"
+  },
+  "name": "Giri Akash Jeevan",
+  "phone": {
+    "$numberLong": "9503893010"
+  },
+  "email": "akashjgiri2001@gmail.com",
+  "company": "Qualcomm",
+  "role": "Engineer",
+  "linkedin": "https://www.linkedin.com/in/adwaitgondhalekar",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d12"
+  },
+  "name": "Chavan Anjali Tarachand",
+  "phone": {
+    "$numberLong": "7559297798"
+  },
+  "email": "anjalichavan265@gmail.com",
+  "company": "MSS International",
+  "role": "Senior Sales Officer",
+  "linkedin": "https://www.linkedin.com/in/anjali-chavan-15b8a11b0",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d13"
+  },
+  "name": "Karke Ashwini Lalit",
+  "phone": {
+    "$numberLong": "9823667618"
+  },
+  "email": "ashwinik6112000@gmail.com",
+  "company": "Perennial Systems",
+  "role": "Senior Associate",
+  "linkedin": "https://www.linkedin.com/in/ashwini-karke-157801174",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d14"
+  },
+  "name": "Shirsath Dhanashri Gorak",
+  "phone": {
+    "$numberLong": "8308826562"
+  },
+  "email": "dhanashrishirsath2000@gmail.com",
+  "company": "Rockwell Automation",
+  "role": "Associate Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/dhanashri-shirsath-2985b51b2",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d15"
+  },
+  "name": "Mujumdar Radha Nitin",
+  "phone": {
+    "$numberLong": "7420827617"
+  },
+  "email": "radhamujumdar@gmail.com",
+  "company": "FiniQ",
+  "role": "Angular Developer",
+  "linkedin": "https://www.linkedin.com/in/radhamujumdar",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+},
+{
+  "_id": {
+    "$oid": "6ac90a0d6e54942b98aa1d16"
+  },
+  "name": "Dhage Rambhau Santosh",
+  "phone": {
+    "$numberLong": "9145537380"
+  },
+  "email": "rambhaudhage1234@gmail.com",
+  "company": "Mphasis",
+  "role": "Senior Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/rambhau-dhage-671790197",
+  "graduationYear": 2022,
+  "department": "Computer Engineering"
+}]

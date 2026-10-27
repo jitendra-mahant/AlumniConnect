@@ -118,7 +118,7 @@ export function ReferralModal({ open, onClose, alumni, job, onDone }) {
         onClose();
       }}
     >
-      <p className="rounded-lg bg-navy-50 p-3 text-sm text-navy-800">
+      <p className="rounded-lg bg-slate-100 dark:bg-slate-800 p-3 text-sm text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
         Company: <b>{job?.company || alumni?.currentCompany}</b>
       </p>
       <Field label="Role you are applying for">

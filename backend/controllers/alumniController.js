@@ -9,11 +9,11 @@ const { notifyRole } = require('../utils/notify');
 const { ensureIndex, invalidate } = require('../dsa/indexService');
 
 const SCALAR_FIELDS = [
-  'fullName', 'profilePhoto', 'email', 'phone', 'location',
+  'fullName', 'profilePhoto', 'email', 'secondaryEmail', 'location',
   'college', 'department', 'degree', 'graduationYear', 'batch',
   'currentCompany', 'currentJobTitle', 'professionalDomain', 'experienceYears',
   'industry', 'workLocation', 'employmentType',
-  'linkedinUrl', 'githubUrl', 'portfolioUrl', 'bio',
+  'linkedinUrl', 'linkedinVisibility', 'githubUrl', 'portfolioUrl', 'bio',
 ];
 const BOOL_FIELDS = [
   'availableForMentorship', 'availableForReferral',
@@ -130,18 +130,53 @@ const SORTS = {
   name: { fullName: 1 },
 };
 
-// Hide contact details from the public directory view.
-const publicView = (p) => {
+// Privacy and security sanitizer enforcing LinkedIn visibility rules and strict phone omission
+const sanitizeAlumni = (p, viewer) => {
   const obj = typeof p.toObject === 'function' ? p.toObject() : { ...p };
-  delete obj.email;
   delete obj.phone;
-  delete obj.verificationNote;
+  delete obj.secondary_phone;
+  delete obj.secondaryPhone;
+
+  const isAdmin = viewer?.role === 'admin';
+  const isOwner = viewer && String(obj.user) === String(viewer._id);
+
+  if (!isAdmin && !isOwner) {
+    delete obj.verificationNote;
+
+    // Evaluate LinkedIn privacy settings
+    let allowLinkedIn = false;
+    const vis = obj.linkedinVisibility || 'private';
+
+    if (obj.linkedinConfirmed && obj.linkedinUrl) {
+      if (vis === 'all_authenticated' && viewer) {
+        allowLinkedIn = true;
+      } else if (vis === 'verified_students_and_alumni' && viewer && ['student', 'alumni', 'teacher'].includes(viewer.role)) {
+        allowLinkedIn = true;
+      } else if (vis === 'verified_alumni' && viewer && viewer.role === 'alumni') {
+        allowLinkedIn = true;
+      }
+    }
+
+    if (!allowLinkedIn) {
+      obj.linkedinUrl = null;
+      obj.linkedinProtected = true;
+    }
+  }
+
+  return obj;
+};
+
+// Hide contact details from the public directory view
+const publicView = (p, viewer) => {
+  const obj = sanitizeAlumni(p, viewer);
+  delete obj.email;
+  delete obj.secondaryEmail;
   return obj;
 };
 
 // GET /api/alumni  and  GET /api/alumni/search
 exports.searchAlumni = asyncHandler(async (req, res) => {
-  const isAdmin = req.user.role === 'admin';
+  const isAdmin = req.user?.role === 'admin';
   const query = await buildSearchQuery(req.query, { includeUnverified: isAdmin });
 
   const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
@@ -153,9 +188,11 @@ exports.searchAlumni = asyncHandler(async (req, res) => {
     AlumniProfile.find(query).sort(sort).skip((page - 1) * limit).limit(limit).lean(),
   ]);
 
+  const sanitizedDocs = docs.map((d) => sanitizeAlumni(d, req.user));
+
   res.json({
     success: true,
-    data: isAdmin ? docs : docs.map(publicView),
+    data: sanitizedDocs,
     total,
     page,
     pages: Math.max(Math.ceil(total / limit), 1),
@@ -196,25 +233,43 @@ exports.filters = asyncHandler(async (_req, res) => {
 // GET /api/alumni/:id
 exports.getAlumni = asyncHandler(async (req, res) => {
   assertId(req.params.id, 'alumni id');
-  const profile = await AlumniProfile.findById(req.params.id);
+  let profile = await AlumniProfile.findById(req.params.id);
+  if (!profile) {
+    profile = await AlumniProfile.findOne({ user: req.params.id });
+  }
   if (!profile) throw new ApiError(404, 'Alumni profile not found');
 
-  const isOwner = String(profile.user) === String(req.user._id);
+  const isOwner = Boolean(profile.user && String(profile.user) === String(req.user._id));
   const isAdmin = req.user.role === 'admin';
+
+  // Prevent unverified users from viewing other alumni profiles
+  if (!isOwner && !isAdmin && (req.user.verificationStatus === 'pending' || req.user.isVerified === false)) {
+    throw new ApiError(
+      403,
+      'Your profile is awaiting college administrator verification. You will be notified as soon as it is approved.',
+      {
+        code: 'PENDING_VERIFICATION',
+        verificationStatus: 'pending',
+      }
+    );
+  }
+
   if (profile.verificationStatus !== 'verified' && !isOwner && !isAdmin) {
     throw new ApiError(404, 'Alumni profile not found');
   }
 
   // Relationship between the viewer and this alumnus.
-  const conn = await Connection.findOne({
-    $or: [
-      { requester: req.user._id, recipient: profile.user },
-      { requester: profile.user, recipient: req.user._id },
-    ],
-  }).lean();
+  const conn = profile.user
+    ? await Connection.findOne({
+        $or: [
+          { requester: req.user._id, recipient: profile.user },
+          { requester: profile.user, recipient: req.user._id },
+        ],
+      }).lean()
+    : null;
 
   const connected = conn && conn.status === 'accepted';
-  const data = isOwner || isAdmin || connected ? profile.toObject() : publicView(profile);
+  const data = isOwner || isAdmin || connected ? sanitizeAlumni(profile.toObject(), req.user) : publicView(profile, req.user);
   if (!isAdmin && !isOwner) delete data.verificationNote;
 
   res.json({
@@ -231,6 +286,12 @@ exports.getAlumni = asyncHandler(async (req, res) => {
 });
 
 function applyBody(target, body) {
+  // Prevent unauthorized modification of administrative and security fields
+  delete body.verificationStatus;
+  delete body.isVerified;
+  delete body.role;
+  delete body.user;
+
   for (const urlField of ['profilePhoto', 'linkedinUrl', 'githubUrl', 'portfolioUrl']) {
     if (body[urlField] && !isSafeUrl(body[urlField])) {
       throw new ApiError(400, `Invalid URL provided for ${urlField}. Must start with http:// or https://`);
@@ -396,4 +457,160 @@ exports.getRecommendations = asyncHandler(async (req, res) => {
   res.json({ success: true, data: top });
 });
 
+// GET /api/alumni/company-directory
+// Groups all verified alumni by company, supporting search, batch, role, and department filters
+exports.companyDirectory = asyncHandler(async (req, res) => {
+  const isAdmin = req.user?.role === 'admin';
+  const query = await buildSearchQuery(req.query, { includeUnverified: isAdmin });
+
+  const docs = await AlumniProfile.find(query).sort({ fullName: 1 }).lean();
+  const sanitized = docs.map((d) => sanitizeAlumni(d, req.user));
+
+  const map = new Map();
+  for (const a of sanitized) {
+    const comp = (a.currentCompany || '').trim() || 'Company Not Specified';
+    if (!map.has(comp)) {
+      map.set(comp, {
+        company: comp,
+        count: 0,
+        alumni: [],
+      });
+    }
+    const group = map.get(comp);
+    group.count += 1;
+    group.alumni.push({
+      _id: a._id,
+      fullName: a.fullName,
+      currentJobTitle: a.currentJobTitle || 'Role Not Specified',
+      graduationYear: a.graduationYear,
+      batch: a.batch || String(a.graduationYear || '2022'),
+      department: a.department,
+      skills: a.skills || [],
+      profilePhoto: a.profilePhoto || '',
+      linkedinUrl: a.linkedinUrl,
+      linkedinProtected: !!a.linkedinProtected,
+      verificationStatus: a.verificationStatus,
+      availableForMentorship: !!a.availableForMentorship,
+      availableForReferral: !!a.availableForReferral,
+    });
+  }
+
+  // Sort companies: highest alumni count first; 'Company Not Specified' placed cleanly at end
+  const list = Array.from(map.values()).sort((a, b) => {
+    if (a.company === 'Company Not Specified') return 1;
+    if (b.company === 'Company Not Specified') return -1;
+    return b.count - a.count || a.company.localeCompare(b.company);
+  });
+
+  res.json({
+    success: true,
+    totalAlumni: sanitized.length,
+    totalCompanies: list.length,
+    data: list,
+  });
+});
+
+// PUT /api/alumni/profile/privacy
+// Updates LinkedIn visibility settings and confirmation status
+exports.updatePrivacy = asyncHandler(async (req, res) => {
+  const { linkedinVisibility, linkedinConfirmed } = req.body;
+  const validVis = ['private', 'verified_alumni', 'verified_students_and_alumni', 'all_authenticated'];
+  if (linkedinVisibility && !validVis.includes(linkedinVisibility)) {
+    throw new ApiError(400, 'Invalid linkedin visibility setting');
+  }
+
+  const profile = await AlumniProfile.findOne({ user: req.user._id });
+  if (!profile) throw new ApiError(404, 'Alumni profile not found');
+
+  if (linkedinVisibility) profile.linkedinVisibility = linkedinVisibility;
+  if (typeof linkedinConfirmed === 'boolean') profile.linkedinConfirmed = linkedinConfirmed;
+  await profile.save();
+
+  res.json({
+    success: true,
+    data: sanitizeAlumni(profile, req.user),
+    message: 'Privacy settings updated successfully',
+  });
+});
+
+// GET /api/alumni/year-overview
+// Groups all verified alumni by graduation year and computes dynamic year-wise statistics
+exports.yearOverview = asyncHandler(async (req, res) => {
+  const isAdmin = req.user?.role === 'admin';
+  const query = await buildSearchQuery(req.query, { includeUnverified: isAdmin });
+
+  const docs = await AlumniProfile.find(query).sort({ graduationYear: -1, fullName: 1 }).lean();
+  const sanitized = docs.map((d) => sanitizeAlumni(d, req.user));
+
+  // Distinct graduation years in database for dropdown filter
+  const allYears = (await AlumniProfile.distinct('graduationYear')).filter(Boolean).sort((a, b) => b - a);
+
+  // Group by graduationYear
+  const map = new Map();
+  for (const a of sanitized) {
+    const yr = a.graduationYear ? String(a.graduationYear) : 'Year Not Specified';
+    if (!map.has(yr)) {
+      map.set(yr, {
+        year: yr,
+        count: 0,
+        companies: new Set(),
+        roles: new Set(),
+        departments: new Set(),
+        alumni: [],
+      });
+    }
+    const group = map.get(yr);
+    group.count += 1;
+    if (a.currentCompany && a.currentCompany !== 'Company Not Specified') {
+      group.companies.add(a.currentCompany);
+    }
+    if (a.currentJobTitle && a.currentJobTitle !== 'Role Not Specified') {
+      group.roles.add(a.currentJobTitle);
+    }
+    if (a.department) {
+      group.departments.add(a.department);
+    }
+    group.alumni.push({
+      _id: a._id,
+      fullName: a.fullName,
+      currentCompany: a.currentCompany || 'Company Not Specified',
+      currentJobTitle: a.currentJobTitle || 'Role Not Specified',
+      graduationYear: a.graduationYear,
+      batch: a.batch || (a.graduationYear ? String(a.graduationYear) : 'N/A'),
+      department: a.department,
+      skills: a.skills || [],
+      profilePhoto: a.profilePhoto || '',
+      linkedinUrl: a.linkedinUrl,
+      linkedinProtected: !!a.linkedinProtected,
+      verificationStatus: a.verificationStatus,
+      availableForMentorship: !!a.availableForMentorship,
+      availableForReferral: !!a.availableForReferral,
+    });
+  }
+
+  // Convert to array and sort: recent years first, unspecified at end
+  const list = Array.from(map.values()).map((g) => ({
+    year: g.year,
+    count: g.count,
+    distinctCompanies: g.companies.size,
+    topCompanies: Array.from(g.companies).slice(0, 6),
+    distinctRoles: g.roles.size,
+    departments: Array.from(g.departments),
+    alumni: g.alumni,
+  })).sort((a, b) => {
+    if (a.year === 'Year Not Specified') return 1;
+    if (b.year === 'Year Not Specified') return -1;
+    return Number(b.year) - Number(a.year);
+  });
+
+  res.json({
+    success: true,
+    totalAlumni: sanitized.length,
+    totalBatches: list.length,
+    availableYears: allYears,
+    data: list,
+  });
+});
+
+exports.sanitizeAlumni = sanitizeAlumni;
 exports.buildSearchQuery = buildSearchQuery;

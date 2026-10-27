@@ -53,6 +53,9 @@ function createApp() {
   app.use('/api', apiLimiter);
   app.use('/api/auth/login', authLimiter);
   app.use('/api/auth/register', authLimiter);
+  app.use('/api/auth/resend-verification', authLimiter);
+  app.use('/api/auth/forgot-password', authLimiter);
+  app.use('/api/auth/reset-password', authLimiter);
 
   app.get('/api/health', (_req, res) => res.json({ success: true, status: 'ok', college: env.collegeName }));
 
@@ -66,6 +69,7 @@ function createApp() {
   app.use('/api/qa', require('./routes/qaRoutes'));
   app.use('/api/messages', require('./routes/messageRoutes'));
   app.use('/api/notifications', require('./routes/notificationRoutes'));
+  app.use('/api/teacher', require('./routes/teacherRoutes'));
   app.use('/api/admin', require('./routes/adminRoutes'));
   app.use('/api', require('./routes/miscRoutes'));
 
@@ -74,14 +78,27 @@ function createApp() {
   return app;
 }
 
+const http = require('http');
+const { bootstrapPrimaryAdmin } = require('./config/bootstrap');
+const { initSocket } = require('./socket');
+
 async function start() {
   await connectDB();
+  await bootstrapPrimaryAdmin();
   const app = createApp();
-  app.listen(env.port, () => console.log(`[server] AlumniConnect API running on http://localhost:${env.port}`));
+  const server = http.createServer(app);
+  initSocket(server);
+  server.listen(env.port, () =>
+    console.log(`[server] AlumniConnect API and Real-Time Server running on http://localhost:${env.port}`)
+  );
+  return { app, server };
 }
 
 if (require.main === module) {
-  start().catch(() => process.exit(1));
+  start().catch((err) => {
+    console.error('[server] Fatal start error:', err.message);
+    process.exit(1);
+  });
 }
 
 module.exports = { createApp, start };

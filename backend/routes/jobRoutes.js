@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const c = require('../controllers/jobController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, requireVerified } = require('../middleware/auth');
 
-router.use(protect);
+router.use(protect, requireVerified);
 router.post('/', authorize('alumni', 'admin'), c.createJob);
 router.get('/', c.listJobs);
 router.get('/saved', authorize('student'), c.savedJobs);

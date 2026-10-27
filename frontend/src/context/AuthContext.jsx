@@ -36,10 +36,22 @@ export function AuthProvider({ children }) {
 
   const register = async (payload) => {
     const { data } = await api.post('/auth/register', payload);
-    tokenStore.set(data.token);
-    setUser(data.user);
-    setProfile(data.profile);
-    return data.user;
+    if (data.token) {
+      tokenStore.set(data.token);
+      setUser(data.user);
+      setProfile(data.profile);
+    }
+    return data;
+  };
+
+  const verifyOtp = async (email, otp) => {
+    const { data } = await api.post('/auth/verify-otp', { email, otp });
+    if (data.token) {
+      tokenStore.set(data.token);
+      setUser(data.user);
+      setProfile(data.profile);
+    }
+    return data;
   };
 
   const logout = () => {
@@ -49,7 +61,7 @@ export function AuthProvider({ children }) {
   };
 
   const value = useMemo(
-    () => ({ user, profile, setProfile, loading, login, register, logout, refresh }),
+    () => ({ user, profile, setProfile, loading, login, register, verifyOtp, logout, refresh }),
     [user, profile, loading, refresh]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

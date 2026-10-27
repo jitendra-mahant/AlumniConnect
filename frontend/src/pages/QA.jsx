@@ -180,8 +180,8 @@ export default function QA() {
               onClick={() => updateParam('category', cat)}
               className={`whitespace-nowrap rounded-full px-3.5 py-1.5 font-medium transition ${
                 activeCategory === cat
-                  ? 'bg-navy-800 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-navy-900'
+                  ? 'bg-brand-600 text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
               }`}
             >
               {cat}
@@ -213,8 +213,8 @@ export default function QA() {
                 onClick={() => updateParam('sort', s.value)}
                 className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                   activeSort === s.value
-                    ? 'bg-navy-100 font-bold text-navy-900'
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'bg-teal-50 dark:bg-teal-950/50 font-bold text-teal-800 dark:text-teal-300 ring-1 ring-teal-200 dark:ring-teal-800'
+                    : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
               >
                 {s.label}
@@ -265,21 +265,21 @@ export default function QA() {
             return (
               <article
                 key={q._id}
-                className="card p-5 hover:border-slate-300 transition-all hover:shadow-card flex flex-col justify-between"
+                className="card p-5 hover:border-slate-300 dark:hover:border-slate-700 transition-all hover:shadow-card flex flex-col justify-between"
               >
                 <div>
                   {/* Author Header */}
-                  <div className="flex items-center justify-between gap-2 mb-2 text-xs text-slate-500">
+                  <div className="flex items-center justify-between gap-2 mb-2 text-xs text-slate-500 dark:text-slate-400">
                     <div className="flex items-center gap-2">
                       <Avatar name={author.name} size="sm" />
                       <div>
-                        <span className="font-semibold text-slate-800">{author.name}</span>
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">{author.name}</span>
                         {isAlum ? (
-                          <span className="ml-1 text-slate-500">
+                          <span className="ml-1 text-slate-500 dark:text-slate-400">
                             · {alumProf?.currentJobTitle || 'Alumnus'} {alumProf?.currentCompany ? `@ ${alumProf.currentCompany}` : ''}
                           </span>
                         ) : (
-                          <span className="ml-1 text-slate-500">
+                          <span className="ml-1 text-slate-500 dark:text-slate-400">
                             · {studentProf?.department || 'Student'} {studentProf?.currentYear ? `(Year ${studentProf.currentYear})` : ''}
                           </span>
                         )}
@@ -291,29 +291,29 @@ export default function QA() {
                   </div>
 
                   {/* Title & Preview */}
-                  <h2 className="text-base sm:text-lg font-bold text-navy-950 mb-1.5 hover:text-brand-600 transition">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 hover:text-brand-600 dark:hover:text-brand-400 transition">
                     <Link to={`/qa/${q._id}`}>{q.title}</Link>
                   </h2>
-                  <p className="text-sm text-slate-600 line-clamp-2 mb-3">
+                  <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-3">
                     {q.description}
                   </p>
 
                   {/* Badges & Tags */}
                   <div className="flex flex-wrap items-center gap-1.5 mb-4">
-                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+                    <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-700 dark:text-slate-300">
                       {q.category}
                     </span>
 
                     {hasAccepted ? (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800">
                         <CheckCircle2 className="h-3.5 w-3.5" /> Solved
                       </span>
                     ) : q.status === 'answered' ? (
-                      <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 ring-1 ring-blue-200">
+                      <span className="rounded-md bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800">
                         Answered
                       </span>
                     ) : (
-                      <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+                      <span className="rounded-md bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-800">
                         Open
                       </span>
                     )}
@@ -322,7 +322,7 @@ export default function QA() {
                       <button
                         key={t}
                         onClick={() => updateParam('tag', t)}
-                        className="rounded-full bg-slate-50 px-2 py-0.5 text-[11px] text-slate-500 hover:bg-slate-200 transition"
+                        className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px] text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
                       >
                         #{t}
                       </button>
