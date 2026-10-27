@@ -3,15 +3,26 @@ import { tokenStore } from './client';
 
 let socket = null;
 
+export function getSocketServerUrl() {
+  const socketUrl = (import.meta.env.VITE_SOCKET_URL || '').trim().replace(/\/+$/, '');
+  if (socketUrl) return socketUrl;
+
+  const apiUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+  if (apiUrl) {
+    return apiUrl.replace(/\/api$/, '');
+  }
+
+  // In Vite dev, window.location.origin proxies /socket.io to backend:5000
+  return typeof window !== 'undefined' ? window.location.origin : '';
+}
+
 export function getSocket() {
   if (socket) return socket;
 
   const token = tokenStore.get();
   if (!token) return null;
 
-  // In Vite dev, window.location.origin proxies /socket.io to backend:5000
-  // Or connect directly to backend URL
-  const serverUrl = window.location.origin;
+  const serverUrl = getSocketServerUrl();
 
   socket = io(serverUrl, {
     auth: { token },
@@ -35,7 +46,7 @@ export function connectSocket(token) {
   }
   if (!token) return null;
 
-  const serverUrl = window.location.origin;
+  const serverUrl = getSocketServerUrl();
   socket = io(serverUrl, {
     auth: { token },
     transports: ['websocket', 'polling'],

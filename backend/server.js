@@ -18,13 +18,44 @@ function createApp() {
     })
   );
 
-  // Safe CORS
+  // Safe CORS configuration supporting multiple origins, Vercel deployments, and local dev
+  const configuredOrigins = (env.clientUrl || '')
+    .split(',')
+    .map((s) => s.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
+
+  const localOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://localhost:5174',
+  ];
+
+  const isOriginAllowed = (origin) => {
+    if (!origin) return true;
+    const norm = origin.trim().replace(/\/+$/, '');
+    if (configuredOrigins.includes(norm) || localOrigins.includes(norm)) {
+      return true;
+    }
+    if (process.env.ALLOW_VERCEL_PREVIEWS === 'true' && /^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/.test(norm)) {
+      return true;
+    }
+    return false;
+  };
+
   app.use(
     cors({
-      origin: env.clientUrl.split(',').map((s) => s.trim()),
+      origin: (origin, callback) => {
+        if (isOriginAllowed(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error(`CORS error: Origin ${origin} is not allowed`));
+        }
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     })
   );
 
@@ -57,7 +88,11 @@ function createApp() {
   app.use('/api/auth/forgot-password', authLimiter);
   app.use('/api/auth/reset-password', authLimiter);
 
-  app.get('/api/health', (_req, res) => res.json({ success: true, status: 'ok', college: env.collegeName }));
+  const healthHandler = (_req, res) =>
+    res.json({ success: true, status: 'ok', college: env.collegeName });
+  app.get('/', healthHandler);
+  app.get('/health', healthHandler);
+  app.get('/api/health', healthHandler);
 
   app.use('/api/auth', require('./routes/authRoutes'));
   app.use('/api/alumni', require('./routes/alumniRoutes'));
