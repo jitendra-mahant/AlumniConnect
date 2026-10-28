@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AlumniConnect — Defect Analysis Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 17mm 16mm 18mm;
+      @bottom-center {
+        content: "AlumniConnect | Defect Analysis Report | " counter(page);
+        font: 8pt Arial, sans-serif;
+        color: #64748b;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: #172033;
+      background: #edf2f7;
+      font: 9.5pt/1.48 Arial, Helvetica, sans-serif;
+    }
+    .print-bar {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      color: #fff;
+      background: #12304a;
+    }
+    .print-bar button {
+      padding: 8px 14px;
+      border: 0;
+      border-radius: 5px;
+      color: #fff;
+      background: #0e7490;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 40px 52px;
+      background: #fff;
+      box-shadow: 0 8px 28px #0f172a18;
+    }
+    h1, h2, h3 { color: #12304a; line-height: 1.22; }
+    h1 { margin: 12px 0; font-size: 27pt; }
+    h2 {
+      margin: 25px 0 10px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #0e7490;
+      font-size: 15pt;
+      page-break-after: avoid;
+    }
+    h3 { margin: 17px 0 7px; font-size: 11pt; page-break-after: avoid; }
+    p { margin: 6px 0; }
+    ul, ol { padding-left: 21px; }
+    li { margin: 3px 0; }
+    .cover {
+      display: flex;
+      min-height: 245mm;
+      flex-direction: column;
+      justify-content: center;
+      page-break-after: always;
+    }
+    .eyebrow {
+      color: #0e7490;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .subtitle { color: #475569; font-size: 15pt; }
+    .rule { width: 82px; height: 5px; margin: 20px 0; background: #0e7490; }
+    .meta { margin-top: 24px; border-top: 1px solid #cbd5e1; }
+    .meta div {
+      display: grid;
+      grid-template-columns: 155px 1fr;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .label { color: #64748b; font-weight: 700; }
+    .note {
+      margin: 12px 0;
+      padding: 10px 13px;
+      border-left: 4px solid #0e7490;
+      background: #f0f9ff;
+    }
+    .note.warn { border-color: #b45309; background: #fff7ed; }
+    .note.alert { border-color: #b91c1c; background: #fef2f2; }
+    table {
+      width: 100%;
+      margin: 9px 0 14px;
+      border-collapse: collapse;
+      font-size: 8.2pt;
+    }
+    th, td {
+      padding: 6px 7px;
+      border: 1px solid #cbd5e1;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: #fff; background: #12304a; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; }
+    .status { font-weight: 700; white-space: nowrap; }
+    .pass { color: #166534; }
+    .fail { color: #b91c1c; }
+    .pending { color: #92400e; }
+    .small { color: #64748b; font-size: 8pt; }
+    code {
+      padding: 1px 3px;
+      color: #0f3b57;
+      background: #eef4f8;
+      font: 8pt Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    .section-break { page-break-before: always; }
+    .signoff { margin-top: 25px; }
+    .signoff td { height: 42px; }
+    @media print {
+      body { background: #fff; }
+      .print-bar { display: none; }
+      main { max-width: none; margin: 0; padding: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-bar">
+    <strong>AlumniConnect — Defect Analysis Report</strong>
+    <button onclick="window.print()">Print / Save as PDF</button>
+  </div>
+  <main>
+    <section class="cover">
+      <div class="eyebrow">Software Testing and Quality Assurance</div>
+      <h1>DEFECT ANALYSIS REPORT</h1>
+      <p class="subtitle">Defect Register, Test-Failure Analysis and Priority–Severity Matrix</p>
+      <div class="rule"></div>
+      <p><strong>AlumniConnect — Alumni Networking and Mentorship Platform</strong></p>
+      <p>Prepared as an evidence-based project testing and defect-tracking document.</p>
+      <div class="meta">
+        <div><span class="label">Project</span><span>AlumniConnect</span></div>
+        <div><span class="label">Report type</span><span>Defect analysis, test-case results and triage matrix</span></div>
+        <div><span class="label">Execution date</span><span>28 October 2026</span></div>
+        <div><span class="label">Data basis</span><span>Five existing project test scripts; 32 reported test cases</span></div>
+        <div><span class="label">Build/version</span><span>Not identified by the executed test scripts</span></div>
+        <div><span class="label">Prepared by</span><span>Not specified for this execution record</span></div>
+      </div>
+      <p class="small" style="margin-top:20px">This report distinguishes test failures and verified implementation mismatches from confirmed user-reported production defects. It does not claim that unexecuted checks passed.</p>
+    </section>
+
+    <h2>1. Defect Analysis Overview</h2>
+    <p>AlumniConnect is a web platform for institutional alumni networking, mentorship, profiles and related community workflows. This report follows the defect-analysis structure of the supplied reference while using evidence from the project’s existing tests.</p>
+    <p>Five local Node.js scripts were executed: font/typography checks, sidebar/layout checks, demo-account and helper checks, alumni import/privacy checks, and duplicate-registration scenarios. They reported <strong>28 passes and 4 failures across 32 cases</strong>. The four failures concern font configuration assertions.</p>
+    <div class="note warn"><strong>Evidence boundary:</strong> The typography scripts primarily inspect source text and configuration. Their failures demonstrate mismatches with the tests’ stated expectations; they do not, on their own, prove a production incident. The report therefore records two requirements-conformance findings and one exact-string test discrepancy for owner triage—not a user-reported defect.</div>
+    <p>Scripts that reseed databases or contact live infrastructure were deliberately excluded. No production data was changed, and no new test cases were invented for this report.</p>
+
+    <h2>2. Defect Summary by Severity</h2>
+    <table>
+      <thead><tr><th>Severity</th><th>Definition for this project</th><th>Confirmed from executed tests</th><th>Interpretation</th></tr></thead>
+      <tbody>
+        <tr><td>Critical</td><td>Broad outage, serious data loss, or confirmed severe security exposure.</td><td>0</td><td>No such defect was demonstrated by the selected tests.</td></tr>
+        <tr><td>High</td><td>Core workflow blocked or major privacy/access-control failure demonstrated.</td><td>0</td><td>No high-severity behavior failure was demonstrated in this run.</td></tr>
+        <tr><td>Medium</td><td>Visible functional or requirement-conformance issue with bounded impact.</td><td>2 findings, pending owner acceptance of the font requirement</td><td>Missing Helvetica choice and configured Roboto despite the checked-in tests' strict approved-font expectations.</td></tr>
+        <tr><td>Low</td><td>Minor formatting, fallback, or test-contract discrepancy.</td><td>1 discrepancy</td><td>Exact Times New Roman stack assertion differs because the configured stack includes an additional Georgia fallback.</td></tr>
+        <tr><td>Total</td><td>Findings from the selected test run, not a full release-cycle inventory.</td><td>3 findings; 4 failed assertions</td><td>Two tests report the missing Helvetica choice; the other two assertions identify the fallback and Roboto mismatches.</td></tr>
+      </tbody>
+    </table>
+    <p class="small">Severity is provisional. The project owner should confirm whether the existing font assertions represent the approved acceptance criteria before final priority assignment.</p>
+
+    <h2>3. Defect Summary by Module</h2>
+    <table>
+      <thead><tr><th>Module / workflow</th><th>Failed assertions</th><th>Potential impact</th><th>Recommended action</th></tr></thead>
+      <tbody>
+        <tr><td>Typography / font selection</td><td>3</td><td>Available font choices and active typography may not match the project's stated font policy.</td><td>Confirm approved fonts; reconcile implementation and tests; rerun both typography scripts.</td></tr>
+        <tr><td>Sidebar / responsive layout</td><td>1</td><td>The font-choice assertion in the UI suite fails. Other sidebar and breakpoint source assertions passed.</td><td>Retest the font option after the requirement is resolved; treat breakpoint checks as source-only evidence.</td></tr>
+        <tr><td>Authentication / demo-account helpers</td><td>0</td><td>No failure in the selected fixture/helper assertions.</td><td>Do not infer full API authentication coverage from these local checks.</td></tr>
+        <tr><td>Alumni import / privacy sanitization</td><td>0</td><td>No failure in the tested dataset, normalization and sanitizer assertions.</td><td>Database persistence and broader authorization remain outside this run.</td></tr>
+        <tr><td>Duplicate registration</td><td>0</td><td>Local normalization and simulated response/data-preservation assertions passed.</td><td>Live controller and database behavior were not exercised.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>4. Defect Register — Findings from the Executed Tests</h2>
+    <h3>QA-TYP-01 — Expected Helvetica option is absent</h3>
+    <table>
+      <tbody>
+        <tr><th style="width:25%">Field</th><th>Record</th></tr>
+        <tr><td>Type / status</td><td>Requirements-conformance finding; observed by existing automated assertions; owner triage pending.</td></tr>
+        <tr><td>Evidence</td><td><code>testFontSelectorAndTypography.js</code> case 1 and <code>testSidebarControlsAndResponsiveness.js</code> case 5 both failed because the checked source did not contain the expected Helvetica option.</td></tr>
+        <tr><td>Expected</td><td>Font configuration provides the approved Arial, Helvetica, and Times New Roman choices as defined by those existing tests.</td></tr>
+        <tr><td>Observed</td><td>The test scripts report “Helvetica must be defined” / “Must include Helvetica”.</td></tr>
+        <tr><td>Impact / provisional severity</td><td>Font-selection requirement may be unmet; Medium, subject to owner confirming the requirement is current.</td></tr>
+        <tr><td>Priority suggestion</td><td>P2 if the approved typography requirement is mandatory for the current submission; otherwise re-triage against the current design decision.</td></tr>
+        <tr><td>Fix status</td><td>Not changed in this report task; no fix has been claimed.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>QA-TYP-02 — Roboto is configured despite the test's restricted-font expectation</h3>
+    <table>
+      <tbody>
+        <tr><th style="width:25%">Field</th><th>Record</th></tr>
+        <tr><td>Type / status</td><td>Potential typography policy deviation observed by a repository test; owner triage pending.</td></tr>
+        <tr><td>Evidence</td><td><code>testFontSelectorAndTypography.js</code> case 8 failed and reported “Disallowed web font found: roboto”. The inspected theme/CSS sources include a Roboto option/reference.</td></tr>
+        <tr><td>Expected</td><td>The test expects zero unauthorized external web-font names in inspected typography sources.</td></tr>
+        <tr><td>Observed</td><td>Roboto is present in the inspected source set, so the existing assertion fails.</td></tr>
+        <tr><td>Impact / provisional severity</td><td>Potential violation of the restricted font policy; Medium if Arial/Helvetica/Times-only remains binding.</td></tr>
+        <tr><td>Priority suggestion</td><td>P2 if the restricted-font requirement is confirmed; otherwise update the test contract to match the approved design.</td></tr>
+        <tr><td>Fix status</td><td>Not changed in this report task; no fix has been claimed.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>QA-TYP-03 — Exact Times New Roman fallback string differs</h3>
+    <table>
+      <tbody>
+        <tr><th style="width:25%">Field</th><th>Record</th></tr>
+        <tr><td>Type / status</td><td>Test expectation discrepancy; functional font failure not established.</td></tr>
+        <tr><td>Evidence</td><td><code>testFontSelectorAndTypography.js</code> case 3 failed because the actual configured stack contains an additional Georgia fallback compared with the exact string expected by the test.</td></tr>
+        <tr><td>Expected</td><td>The test requires an exact Times New Roman stack string.</td></tr>
+        <tr><td>Observed</td><td>Times New Roman is present, but the stack differs in its fallback list.</td></tr>
+        <tr><td>Impact / provisional severity</td><td>Low pending a decision on whether the extra fallback violates the requirement.</td></tr>
+        <tr><td>Priority suggestion</td><td>P3; align the test and implementation with the approved font-stack requirement.</td></tr>
+        <tr><td>Fix status</td><td>Not changed in this report task.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-break">5. Test Cases — Existing Project Scripts Only</h2>
+    <p>The cases below correspond only to test blocks/assertions in the five executed project scripts. “PASS” means the script's stated assertion passed; it does not mean a full end-to-end feature flow was tested.</p>
+    <h3>5.1 Font Selector and Typography — <code>testFontSelectorAndTypography.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-TYP-01</td><td>Theme source maps the approved Arial, Helvetica and Times New Roman font definitions.</td><td>Helvetica definition not found by the test.</td><td class="status fail">FAIL</td></tr>
+        <tr><td>TC-TYP-02</td><td>Font application sets <code>--app-font-family</code>, persists the choice and dispatches the font-change event.</td><td>All checked source markers present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-03</td><td>Pre-hydration script restores the expected exact font stacks before first paint.</td><td>Times stack differs from the exact string expected; Georgia fallback is present.</td><td class="status fail">FAIL</td></tr>
+        <tr><td>TC-TYP-04</td><td>Global CSS binds page typography and form controls to the active font variable.</td><td>All checked CSS markers present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-05</td><td>Tailwind sans and display families bind to the active font variable.</td><td>Both expected bindings present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-06</td><td>Application startup applies the initial/persisted font and theme.</td><td>Both startup calls found in source.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-07</td><td>Toolbar listens to font/theme/storage changes and exposes the expected accessible label.</td><td>Checked event and label markers present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-08</td><td>Inspected typography sources contain no disallowed external web-font names.</td><td>Roboto reference detected by the assertion.</td><td class="status fail">FAIL</td></tr>
+      </tbody>
+    </table>
+    <h3>5.2 Sidebar, Theme Controls and Breakpoint Source Checks — <code>testSidebarControlsAndResponsiveness.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-UI-01</td><td>Desktop sidebar source places controls above the profile card with expected layout markers.</td><td>Expected source markers and ordering present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-02</td><td>Font selector and theme toggle use the expected horizontal row sizing.</td><td>Expected class strings present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-03</td><td>Font selector source includes the type icon, label and dropdown indicator.</td><td>Expected component markers present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-04</td><td>Theme toggle source uses the expected Moon/Sun icons and action labels.</td><td>Expected markers present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-05</td><td>Theme source provides Arial, Helvetica and Times New Roman with expected stacks.</td><td>Helvetica option not found.</td><td class="status fail">FAIL</td></tr>
+        <tr><td>TC-UI-06</td><td>Dropdown source supports Escape/arrow keys and listbox ARIA semantics.</td><td>Expected keyboard and ARIA markers present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-07</td><td>Mobile drawer source includes the toolbar and profile section.</td><td>Expected source markers present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-08</td><td>Source includes mobile/desktop layout class patterns for 320, 375, 768, 1024, 1280 and 1440 px scenarios.</td><td>Expected class markers present; no browser rendering was performed.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h3>5.3 Demo Accounts, Password Helpers, Email Rules and URL/Privacy Helpers — <code>testAuthAndDemoAccounts.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-AUTH-01</td><td>Configured admin demo account has the expected role, institutional email and active/verified state.</td><td>Assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-02</td><td>Configured teacher demo account has the expected role, institutional email and active/verified state.</td><td>Assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-03</td><td>Configured student demo account has the expected role, institutional email and active/verified state.</td><td>Assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-04</td><td>Configured alumni demo account has the expected role, institutional email and active/verified state.</td><td>Assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-05</td><td>Bcrypt accepts the matching password and rejects an incorrect password.</td><td>Both comparisons passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-06</td><td>Local email-rule examples accept the institutional domain and reject public/other domains.</td><td>All included examples passed; registration API not called.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-07</td><td>LinkedIn helper normalizes accepted URLs and rejects malformed/javascript-scheme inputs.</td><td>All included helper assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-08</td><td>Public profile sanitizer strips phone fields and hides private/unconfirmed LinkedIn data.</td><td>All included sanitizer assertions passed.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h3>5.4 2022 Alumni Data and Privacy — <code>test2022ImportAndPrivacy.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-DATA-01</td><td>Import dataset contains 48 entries and no phone/secondary-phone fields.</td><td>All 48 records passed the asserted field checks.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DATA-02</td><td>Company normalization handles known variants and empty/null values.</td><td>All included normalization assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DATA-03</td><td>Sanitizer enforces LinkedIn visibility for public, student, permitted and admin viewer fixtures while stripping phone fields.</td><td>All four viewer scenarios passed.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h3>5.5 Duplicate Registration Scenarios — <code>testDuplicateRegistrationFlow.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-DUP-01</td><td>Mixed-case/whitespace email examples normalize consistently.</td><td>All examples passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-02</td><td>Local validation examples reject external domains and malformed email values.</td><td>All examples passed; no API call was made.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-03</td><td>Simulated duplicate response has expected 409 status/message and omits checked sensitive fields.</td><td>In-script response simulation matched assertions; live controller not exercised.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-04</td><td>Duplicate attempt does not mutate the existing in-memory account fixture.</td><td>Fixture/password assertions passed; database not exercised.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-05</td><td>In-memory new-account fixture accepts matching bcrypt password and active status.</td><td>Simulation passed; registration/login API not exercised.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-break">6. Defect Density Analysis</h2>
+    <p>Defect density requires a confirmed defect count and an agreed software-size measure, such as KLOC, measured for the same scope. A verified project/module size was not collected for this run. The two typography findings are pending requirement-owner triage, so presenting a numeric defect-density value would be misleading.</p>
+    <p><strong>Formula:</strong> Defect Density = confirmed defects ÷ software size</p>
+    <table>
+      <thead><tr><th>Component / module</th><th>Observed findings</th><th>Verified size metric</th><th>Density</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Typography / font selector</td><td>2 conformance findings pending owner confirmation; 1 exact-string test discrepancy</td><td>Not measured</td><td>Not calculated</td><td>Confirm acceptance criteria and measure module size only if density reporting is required.</td></tr>
+        <tr><td>Other tested modules</td><td>0 failed assertions in selected scripts</td><td>Not measured</td><td>Not calculated</td><td>Do not interpret passing helper/source assertions as exhaustive defect-free status.</td></tr>
+        <tr><td>Project total</td><td>3 grouped findings from 4 failed assertions</td><td>Not measured</td><td>Not calculated</td><td>Reconcile triage status and code-size scope before producing a density metric.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>7. Priority–Severity Matrix</h2>
+    <p>Severity describes impact. Priority describes urgency. This proposed matrix is a triage aid; it does not imply that a finding has been assigned by the project owner.</p>
+    <table>
+      <thead><tr><th>Priority \ Severity</th><th>Critical</th><th>High</th><th>Medium</th><th>Low</th></tr></thead>
+      <tbody>
+        <tr><th>P1 — Urgent</th><td>Block release; immediate fix.</td><td>Fix before release when a key workflow is blocked.</td><td>Escalate only if broad impact or mandatory acceptance criterion is at risk.</td><td>Normally not P1; document exceptional reason.</td></tr>
+        <tr><th>P2 — High</th><td>Normally P1; document exception.</td><td>Fix in current cycle.</td><td>Fix before submission/demo if requirement is confirmed.</td><td>Schedule only when user impact warrants it.</td></tr>
+        <tr><th>P3 — Medium</th><td>Re-triage; normally unsuitable.</td><td>Re-triage or provide mitigation.</td><td>Plan in next suitable cycle.</td><td>Fix when capacity allows.</td></tr>
+        <tr><th>P4 — Low</th><td>Re-triage; normally unsuitable.</td><td>Re-triage; normally unsuitable.</td><td>Backlog only if impact is limited.</td><td>Minor issue; backlog.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>Suggested triage:</strong> QA-TYP-01 and QA-TYP-02 may be P2 if the checked-in approved-font requirement is still binding for the current release. QA-TYP-03 is P3 unless the fallback rule is explicitly prohibited. Confirm with the project owner.</div>
+
+    <h2>8. Test Scripts Present but Not Run in This Cycle</h2>
+    <p>The following existing scripts were not executed as part of this bounded run. Their existence is not evidence that their cases passed. The database-reseeding smoke test was excluded to avoid changing database contents; live SMTP/network and broader integration tests were excluded to avoid external side effects.</p>
+    <table>
+      <thead><tr><th>Existing project script</th><th>Reason not run in this cycle</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><code>backend/scripts/smokeTest.js</code></td><td>Script documentation says it reseeds the database; its fallback can use the configured MongoDB URI.</td><td class="status pending">NOT RUN</td></tr>
+        <tr><td><code>backend/scripts/testEmailAuthFlow.js</code></td><td>Connects to configured MongoDB and performs SMTP configuration/connection checks.</td><td class="status pending">NOT RUN</td></tr>
+        <tr><td><code>backend/scripts/testSmtpConnection.js</code></td><td>Verifies SMTP and sends a test email; external side effect.</td><td class="status pending">NOT RUN</td></tr>
+        <tr><td><code>backend/scripts/testVerificationAndSecurity.js</code></td><td>Starts a service and connects to configured MongoDB; database environment was not verified as isolated.</td><td class="status pending">NOT RUN</td></tr>
+        <tr><td><code>backend/scripts/testRealtime.js</code></td><td>Starts an HTTP/socket integration test server; excluded from the selected local-only run.</td><td class="status pending">NOT RUN</td></tr>
+        <tr><td><code>backend/scripts/testEndToEndAuthFlow.js</code></td><td>Starts an integration server; excluded from this bounded run.</td><td class="status pending">NOT RUN</td></tr>
+        <tr><td><code>backend/scripts/testAdminRecoveryAndGuide.js</code></td><td>Starts an integration server; excluded from this bounded run.</td><td class="status pending">NOT RUN</td></tr>
+        <tr><td><code>backend/scripts/testEmailAndFeatureAudit.js</code></td><td>Not part of the five selected scripts; not counted or reported as passed.</td><td class="status pending">NOT RUN</td></tr>
+      </tbody>
+    </table>
+    <p class="small">The listed names are from the repository. No test cases were fabricated for these unexecuted scripts.</p>
+
+    <h2>9. Defect Tracking Workflow</h2>
+    <ol>
+      <li>Confirm the font requirements against the currently approved project specification.</li>
+      <li>Record each confirmed product defect separately, with reproduction steps, expected/actual behavior, environment, severity, priority, owner and evidence.</li>
+      <li>Keep test-contract discrepancies separate from product defects until acceptance criteria are reconciled.</li>
+      <li>Use a consistent lifecycle: New/Open → Triaged → In Progress → Fixed/Resolved → Retested → Closed; reopen if retesting fails.</li>
+      <li>After a fix or test update, rerun the relevant existing typography tests and record the fresh output.</li>
+      <li>Run integration scripts only after confirming an isolated test database and safe external-service configuration.</li>
+      <li>Do not claim tracker tickets were created or findings closed unless the team records and verifies those actions.</li>
+    </ol>
+
+    <h2>10. Key Observations and Conclusion</h2>
+    <ul>
+      <li>All 32 cases in the five selected existing scripts were executed: 28 passed and 4 failed.</li>
+      <li>All four failures concern font/typography assertions: missing Helvetica is reported twice, plus one Times-stack exact-string mismatch and one Roboto restriction failure.</li>
+      <li>The 28 passing assertions passed within the scope of their individual scripts; several are static-source checks or in-memory simulations, not end-to-end service tests.</li>
+      <li>No live database reseeding, SMTP delivery, or production workflow was attempted.</li>
+      <li>Defect density was not calculated because no verified size metric or final owner-triaged defect count is available.</li>
+    </ul>
+    <p>This report records observed evidence, not an overall product certification. Resolve the font-policy question, triage the three grouped findings, and rerun only the relevant existing tests. The remaining project scripts can be run later against explicitly isolated infrastructure with their side effects understood.</p>
+    <table class="signoff">
+      <thead><tr><th>Role</th><th>Name / signature</th><th>Date</th></tr></thead>
+      <tbody>
+        <tr><td>Prepared by</td><td></td><td></td></tr>
+        <tr><td>Reviewed by</td><td></td><td></td></tr>
+        <tr><td>Approved by</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p class="small">End of report.</p>
+  </main>
+</body>
+</html>

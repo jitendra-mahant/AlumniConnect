@@ -248,7 +248,10 @@ export default function VerifyEmail() {
                 Enter Verification Code
               </h1>
               <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-300">
-                We sent a 6-digit confirmation code via Brevo to your official college email.
+                We sent a 6-digit confirmation code to your official college email.
+              </p>
+              <p className="mt-1 text-[11px] text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 rounded-md px-2.5 py-1">
+                📬 <strong>Tip:</strong> If it does not appear in your inbox within a minute, please check your <strong>Spam / Junk folder</strong>.
               </p>
 
               {/* Email display / edit toggle */}

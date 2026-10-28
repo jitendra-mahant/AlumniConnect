@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AlumniConnect — STQA Test Execution Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 17mm 18mm 17mm;
+      @bottom-center {
+        content: "AlumniConnect | STQA Test Execution Report | " counter(page);
+        font: 8pt Arial, sans-serif;
+        color: #64748b;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: #172033;
+      background: #edf2f7;
+      font: 10pt/1.5 Arial, Helvetica, sans-serif;
+    }
+    .print-bar {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      color: #fff;
+      background: #12304a;
+    }
+    .print-bar button {
+      border: 0;
+      border-radius: 5px;
+      padding: 8px 14px;
+      color: #fff;
+      background: #0e7490;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 42px 54px;
+      background: #fff;
+      box-shadow: 0 8px 28px #0f172a18;
+    }
+    h1, h2, h3 { color: #12304a; line-height: 1.2; }
+    h1 { margin: 0 0 14px; font-size: 26pt; }
+    h2 {
+      margin: 26px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #0e7490;
+      font-size: 16pt;
+      page-break-after: avoid;
+    }
+    h3 { margin: 18px 0 8px; font-size: 12pt; page-break-after: avoid; }
+    p { margin: 7px 0; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 4px 0; }
+    .cover {
+      display: flex;
+      min-height: 245mm;
+      flex-direction: column;
+      justify-content: center;
+      page-break-after: always;
+    }
+    .eyebrow {
+      color: #0e7490;
+      font-size: 10pt;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .cover h1 { margin-top: 20px; font-size: 30pt; }
+    .subtitle { max-width: 560px; color: #475569; font-size: 15pt; }
+    .cover-rule { width: 84px; height: 5px; margin: 25px 0; background: #0e7490; }
+    .cover-meta { margin-top: 32px; border-top: 1px solid #cbd5e1; }
+    .cover-meta div {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .label { color: #64748b; font-weight: 700; }
+    .callout {
+      margin: 14px 0;
+      padding: 11px 14px;
+      border-left: 4px solid #0e7490;
+      background: #f0f9ff;
+    }
+    .callout.warn { border-color: #b45309; background: #fff7ed; }
+    .callout.fail { border-color: #b91c1c; background: #fef2f2; }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .metric {
+      padding: 12px;
+      border: 1px solid #dbe4ee;
+      border-radius: 5px;
+      background: #f8fafc;
+    }
+    .metric strong { display: block; color: #12304a; font-size: 19pt; }
+    .metric span { color: #64748b; font-size: 8.5pt; }
+    table {
+      width: 100%;
+      margin: 10px 0 16px;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+    }
+    th, td {
+      padding: 7px 8px;
+      border: 1px solid #cbd5e1;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: #fff; background: #12304a; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; }
+    .status { font-weight: 700; white-space: nowrap; }
+    .pass { color: #166534; }
+    .fail { color: #b91c1c; }
+    .pill {
+      display: inline-block;
+      margin: 2px 3px 2px 0;
+      padding: 2px 7px;
+      border-radius: 10px;
+      color: #334155;
+      background: #e2e8f0;
+      font-size: 8pt;
+    }
+    code {
+      padding: 1px 3px;
+      color: #0f3b57;
+      background: #eef4f8;
+      font: 8.5pt Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    .small { color: #64748b; font-size: 8.5pt; }
+    .section-break { page-break-before: always; }
+    .signoff { margin-top: 35px; }
+    .signoff td { height: 54px; }
+    @media print {
+      body { background: #fff; }
+      .print-bar { display: none; }
+      main { max-width: none; margin: 0; padding: 0; box-shadow: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-bar">
+    <strong>AlumniConnect — STQA Test Execution Report</strong>
+    <button onclick="window.print()">Print / Save as PDF</button>
+  </div>
+  <main>
+    <section class="cover">
+      <div class="eyebrow">Software Testing and Quality Assurance</div>
+      <h1>AlumniConnect</h1>
+      <p class="subtitle">Test Plan, Executed Test Cases, Results and Quality Summary</p>
+      <div class="cover-rule"></div>
+      <p>A repository-grounded testing report for the AlumniConnect alumni networking and mentorship platform.</p>
+      <div class="cover-meta">
+        <div><span class="label">Report type</span><span>STQA Test Execution Report</span></div>
+        <div><span class="label">Execution date</span><span>28 October 2026</span></div>
+        <div><span class="label">Project version</span><span>Not identified in the executed test scripts</span></div>
+        <div><span class="label">Execution scope</span><span>Five existing, local, non-destructive Node.js test scripts</span></div>
+        <div><span class="label">Test evidence</span><span>Console results from the scripts listed in Section 3</span></div>
+      </div>
+      <p class="small" style="margin-top:24px">This report records only the test scenarios found in the repository and actually executed for this run. It does not claim unrun API, database, SMTP, browser, or manual test coverage.</p>
+    </section>
+
+    <h2>1. Executive Summary</h2>
+    <p>Five existing test scripts were run directly with Node.js. The selected scripts exercise typography and layout source checks, demo-account configuration, password and URL helper behavior, alumni data normalization and privacy sanitization, and duplicate-registration scenarios.</p>
+    <div class="summary-grid">
+      <div class="metric"><strong>32</strong><span>Existing cases recorded</span></div>
+      <div class="metric"><strong class="pass">28</strong><span>Passed</span></div>
+      <div class="metric"><strong class="fail">4</strong><span>Failed</span></div>
+      <div class="metric"><strong>87.5%</strong><span>Pass rate (28 / 32)</span></div>
+    </div>
+    <table>
+      <thead><tr><th>Existing test script</th><th>Cases</th><th>Passed</th><th>Failed</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td><code>backend/scripts/testFontSelectorAndTypography.js</code></td><td>8</td><td>5</td><td>3</td><td class="status fail">FAIL</td></tr>
+        <tr><td><code>backend/scripts/testSidebarControlsAndResponsiveness.js</code></td><td>8</td><td>7</td><td>1</td><td class="status fail">FAIL</td></tr>
+        <tr><td><code>backend/scripts/testAuthAndDemoAccounts.js</code></td><td>8</td><td>8</td><td>0</td><td class="status pass">PASS</td></tr>
+        <tr><td><code>backend/scripts/test2022ImportAndPrivacy.js</code></td><td>3</td><td>3</td><td>0</td><td class="status pass">PASS</td></tr>
+        <tr><td><code>backend/scripts/testDuplicateRegistrationFlow.js</code></td><td>5</td><td>5</td><td>0</td><td class="status pass">PASS</td></tr>
+        <tr><th>Total</th><th>32</th><th>28</th><th>4</th><th>87.5%</th></tr>
+      </tbody>
+    </table>
+    <div class="callout fail"><strong>Attention:</strong> The four failures are all in typography assertions. They expose differences between test expectations and the current font configuration; see Section 5. No source-code fixes were made as part of this report generation.</div>
+
+    <h2>2. Project and Test Scope</h2>
+    <p>AlumniConnect is a web platform connecting students, alumni, teachers and administrators. The selected repository tests cover only the behaviors explicitly asserted by the five executed scripts.</p>
+    <h3>In scope for this execution</h3>
+    <ul>
+      <li>Font/theme wiring and typography configuration through source assertions.</li>
+      <li>Sidebar and mobile-drawer structure, keyboard affordances, and responsive breakpoint class presence through source assertions.</li>
+      <li>Configured demo-account roles, bcrypt behavior, institutional email examples, LinkedIn URL normalization, and profile privacy sanitization.</li>
+      <li>2022 alumni dataset size and selected data normalization/privacy behavior.</li>
+      <li>Duplicate-registration normalization and response/data-preservation scenarios, including the script's explicitly simulated cases.</li>
+    </ul>
+    <h3>Not covered by this execution</h3>
+    <ul>
+      <li>Live API workflows, persisted database behavior, database migration/seeding, or production data.</li>
+      <li>Real browser rendering at viewport sizes; the responsive checks inspect source/class strings rather than opening a browser.</li>
+      <li>Actual SMTP connection or email delivery, load/performance testing, accessibility automation, and manual exploratory testing.</li>
+      <li>Any test script not listed in Section 3. No new test cases were invented or executed.</li>
+    </ul>
+    <div class="callout warn">The backend package defines a smoke-test command that reseeds a database and can fall back to the configured MongoDB URI. It was intentionally not run to avoid changing local or live data. SMTP and database integration scripts were also excluded from this non-destructive run.</div>
+
+    <h2>3. Test Approach and Environment</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Execution detail</th></tr></thead>
+      <tbody>
+        <tr><td>Approach</td><td>Execute existing Node.js scripts directly; record each printed PASS/FAIL case and preserve the script's actual scope.</td></tr>
+        <tr><td>Runtime</td><td>Node.js in the repository's existing workspace environment. Runtime version was not captured in the execution output.</td></tr>
+        <tr><td>Database/network</td><td>No live database, SMTP service, or external test endpoint was intentionally used by the five selected scripts.</td></tr>
+        <tr><td>Test data</td><td>Script fixtures and repository data, including mock profile/viewer objects and a 48-record import dataset assertion.</td></tr>
+        <tr><td>Execution commands</td><td><code>node backend/scripts/&lt;script-name&gt;.js</code> for each script listed below.</td></tr>
+      </tbody>
+    </table>
+    <ol>
+      <li><code>testFontSelectorAndTypography.js</code></li>
+      <li><code>testSidebarControlsAndResponsiveness.js</code></li>
+      <li><code>testAuthAndDemoAccounts.js</code></li>
+      <li><code>test2022ImportAndPrivacy.js</code></li>
+      <li><code>testDuplicateRegistrationFlow.js</code></li>
+    </ol>
+    <p class="small">Counts are derived from the explicit assertions/test blocks reported by the existing scripts. A PASS applies only to the stated assertion; it is not evidence that an entire feature or application flow is production-ready.</p>
+
+    <h2 class="section-break">4. Detailed Test Cases and Execution Results</h2>
+    <h3>4.1 Font selector and typography — <code>testFontSelectorAndTypography.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-TYP-01</td><td>Configured font choices include the expected Arial, Helvetica, and Times New Roman definitions.</td><td>Helvetica definition was not found in <code>theme.js</code>.</td><td class="status fail">FAIL</td></tr>
+        <tr><td>TC-TYP-02</td><td>Font application uses <code>--app-font-family</code>, persists the choice, and emits the font-change event.</td><td>All checked source markers were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-03</td><td>Pre-hydration font map contains the exact expected Times New Roman stack.</td><td>The exact expected stack was not found; the current map includes a Georgia fallback.</td><td class="status fail">FAIL</td></tr>
+        <tr><td>TC-TYP-04</td><td>Global CSS binds page typography and form controls to the active font variable.</td><td>All checked CSS markers were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-05</td><td>Tailwind sans and display families bind to the active font variable.</td><td>Both configured bindings were found.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-06</td><td>Application startup applies the persisted/initial font and theme.</td><td>Both startup calls were found in <code>main.jsx</code>.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-07</td><td>Toolbar synchronizes its state through font/theme/storage events and exposes an accessible label.</td><td>All checked toolbar markers were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-TYP-08</td><td>No disallowed external web-font names occur in the inspected typography sources.</td><td>Test detected Roboto in the inspected sources and rejected it under its no-Roboto rule.</td><td class="status fail">FAIL</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.2 Sidebar, controls and responsive source checks — <code>testSidebarControlsAndResponsiveness.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-UI-01</td><td>Desktop sidebar contains toolbar in the intended position above the profile card.</td><td>Expected sidebar, navigation, divider and ordering markers were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-02</td><td>Font selector and theme toggle share a correctly sized horizontal toolbar row.</td><td>Expected flex and sizing class strings were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-03</td><td>Font selector includes type icon, active label and dropdown indicator.</td><td>Expected component markers were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-04</td><td>Theme toggle shows the appropriate icon and accessible action label.</td><td>Moon/Sun and label expressions were found.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-05</td><td>Font choices include Arial, Helvetica and Times New Roman stacks.</td><td>Helvetica stack was not present in the theme source.</td><td class="status fail">FAIL</td></tr>
+        <tr><td>TC-UI-06</td><td>Dropdown source supports Escape, arrow-key navigation and listbox semantics.</td><td>Expected keyboard and ARIA markers were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-07</td><td>Mobile drawer includes the toolbar and profile section.</td><td>Expected drawer and toolbar markers were present.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-UI-08</td><td>Source contains layout class patterns for 320, 375, 768, 1024, 1280 and 1440 px scenarios.</td><td>Expected mobile/desktop class markers were found. This is a source assertion, not browser rendering.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.3 Demo accounts, password, email, URL and privacy — <code>testAuthAndDemoAccounts.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-AUTH-01</td><td>Configured administrator demo account has the expected institutional role and active/verified properties.</td><td>Administrator configuration assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-02</td><td>Configured teacher demo account has the expected institutional role and active/verified properties.</td><td>Teacher configuration assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-03</td><td>Configured student demo account has the expected institutional role and active/verified properties.</td><td>Student configuration assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-04</td><td>Configured alumni demo account has the expected institutional role and active/verified properties.</td><td>Alumni configuration assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-05</td><td>Bcrypt hash validates the correct password and rejects a wrong password.</td><td>Both comparison assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-06</td><td>Institutional email examples are accepted; public/other domains are rejected by the script's local validation expression.</td><td>All five positive/negative examples passed. The script does not invoke the registration API.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-07</td><td>LinkedIn URLs normalize valid forms and reject invalid/javascript schemes.</td><td>All five helper assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-AUTH-08</td><td>Public profile sanitization strips phone fields and hides private, unconfirmed LinkedIn data.</td><td>All asserted sanitized output fields matched expectations.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.4 2022 dataset and privacy — <code>test2022ImportAndPrivacy.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-DATA-01</td><td>Dataset contains 48 records and no phone/secondary-phone fields.</td><td>All 48 records satisfied the checked field-exclusion assertions.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DATA-02</td><td>Company normalization handles known variants and empty/null values.</td><td>All six normalization assertions passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DATA-03</td><td>Sanitized alumni output enforces LinkedIn visibility for public, student and admin viewers while excluding phone fields.</td><td>Public, student, permitted-viewer and admin fixture checks passed.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.5 Duplicate registration scenarios — <code>testDuplicateRegistrationFlow.js</code></h3>
+    <table>
+      <thead><tr><th>ID</th><th>Test / expected result</th><th>Observed result</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>TC-DUP-01</td><td>Whitespace-trimmed and mixed-case email values normalize to lowercase canonical values.</td><td>All listed normalization examples passed.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-02</td><td>Non-institutional and malformed email examples are rejected by the script's local validation expression.</td><td>Positive and negative example assertions passed; no API request was made.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-03</td><td>Duplicate email scenario yields the expected 409 response shape and message without sensitive fields.</td><td>Script-built duplicate response simulation matched expected values; live controller/route was not exercised.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-04</td><td>Duplicate attempt must not overwrite existing account fixture data or password.</td><td>In-memory fixture assertions passed; no database persistence was exercised.</td><td class="status pass">PASS</td></tr>
+        <tr><td>TC-DUP-05</td><td>New-account login scenario accepts the matching bcrypt password and active account fixture.</td><td>In-memory registration/login simulation passed; no live registration or login API was exercised.</td><td class="status pass">PASS</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-break">5. Findings and Defect/Discrepancy Log</h2>
+    <p>The existing typography tests were not modified. Findings below preserve their literal outcomes and distinguish a failed test assertion from a confirmed runtime defect.</p>
+    <table>
+      <thead><tr><th>ID</th><th>Evidence</th><th>Finding</th><th>Recommended disposition</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>F-01</td>
+          <td>TC-TYP-01, TC-UI-05</td>
+          <td>Both scripts expect a Helvetica font option. The current theme configuration instead exposes Arial, Roboto and Times variants, so both assertions fail.</td>
+          <td>Confirm the approved font requirement. Then align either the implementation or the two test expectations and rerun those tests.</td>
+        </tr>
+        <tr>
+          <td>F-02</td>
+          <td>TC-TYP-03</td>
+          <td>The pre-hydration check expects the exact stack <code>'Times New Roman', Times, serif</code>; the current stack includes an additional Georgia fallback. This is an exact-stack mismatch, not absence of Times New Roman.</td>
+          <td>Decide whether the fallback is allowed and make the expected stack consistent in the source and test.</td>
+        </tr>
+        <tr>
+          <td>F-03</td>
+          <td>TC-TYP-08</td>
+          <td>The test rejects any Roboto reference, while the current theme and CSS intentionally include Roboto. The assertion therefore fails against the current configuration.</td>
+          <td>Resolve the font policy and update implementation or test rule accordingly; do not mark the assertion passed until rerun.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout warn"><strong>Classification:</strong> The above are verified test failures and source/test expectation discrepancies. The tests alone do not establish whether the current font choices are acceptable product behavior; that decision depends on the approved typography requirement.</div>
+
+    <h2>6. Quality Summary, Limitations and Next Actions</h2>
+    <h3>Measured results</h3>
+    <ul>
+      <li><strong>Execution rate:</strong> 32 / 32 listed cases executed = 100% for this selected set.</li>
+      <li><strong>Pass rate:</strong> 28 / 32 executed cases passed = 87.5%.</li>
+      <li><strong>Open failed cases:</strong> 4 typography assertions (TC-TYP-01, TC-TYP-03, TC-TYP-08 and TC-UI-05).</li>
+      <li><strong>Not run:</strong> No unexecuted case is counted as a pass. Database/API smoke, SMTP, realtime and other integration scripts are outside this run.</li>
+    </ul>
+    <h3>Limitations</h3>
+    <ul>
+      <li>Several suites validate source strings or local helper logic, not the running browser application.</li>
+      <li>Duplicate-registration scenarios include in-memory simulations and do not verify a database-backed controller response.</li>
+      <li>Responsive breakpoints were checked as class-name presence, not by viewport screenshots or browser automation.</li>
+      <li>There is no claim of full requirements coverage, performance certification, or security certification from this limited run.</li>
+    </ul>
+    <h3>Recommended follow-up</h3>
+    <ol>
+      <li>Confirm the approved font set and fallback policy with the project owner.</li>
+      <li>Update only the conflicting typography assertions or implementation after that decision; rerun the two typography scripts.</li>
+      <li>Run the database-backed smoke test only against an explicitly isolated test database after confirming its URI and reseed behavior.</li>
+      <li>For broader assurance, add or run non-destructive API integration tests and real browser checks as separate, clearly identified test activities.</li>
+    </ol>
+
+    <h2>7. Test Execution Procedure and Sign-off</h2>
+    <ol>
+      <li>Use the project repository and the same dependency/runtime environment used for this execution.</li>
+      <li>Run only the existing scripts listed in Section 3 using Node.js.</li>
+      <li>Compare each assertion with its documented expected result and retain the console output as execution evidence.</li>
+      <li>Resolve F-01 through F-03 based on the agreed typography requirement, then rerun the relevant existing tests.</li>
+      <li>Record any later integration/browser tests separately; do not merge unexecuted cases into the passing count.</li>
+    </ol>
+    <table class="signoff">
+      <thead><tr><th>Role</th><th>Name / signature</th><th>Date</th></tr></thead>
+      <tbody>
+        <tr><td>Prepared by</td><td></td><td></td></tr>
+        <tr><td>Reviewed by</td><td></td><td></td></tr>
+        <tr><td>Approved by</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <p class="small">End of report.</p>
+  </main>
+</body>
+</html>

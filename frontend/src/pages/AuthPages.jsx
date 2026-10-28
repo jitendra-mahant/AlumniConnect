@@ -776,6 +776,7 @@ export function ForgotPassword() {
     try {
       const res = await api.post('/auth/forgot-password', { email: normalized });
       setOtpSent(true);
+      setOtpCode('');
       setOtpCountdown(res.data.cooldown || 60);
       toast.success(res.data.message || 'Recovery code sent to your email.');
     } catch (err) {
@@ -1052,6 +1053,9 @@ export function ForgotPassword() {
               </p>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                 Code expires in 5 minutes. Enter the code and your new password below.
+              </p>
+              <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1">
+                📬 Tip: If the code does not appear in your inbox, please check your <strong>Spam / Junk folder</strong>.
               </p>
             </div>
 

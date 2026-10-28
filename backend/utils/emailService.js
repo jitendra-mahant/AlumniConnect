@@ -94,6 +94,16 @@ async function sendMail({ to, subject, html, text }) {
   if (transporter) {
     try {
       const info = await transporter.sendMail({ from, to, subject, html, text });
+      if (env.nodeEnv !== 'production') {
+        console.info('\n==================== [EMAIL DISPATCHED VIA BREVO SMTP] ====================');
+        console.info(`To:       ${to}`);
+        console.info(`From:     ${from}`);
+        console.info(`Subject:  ${subject}`);
+        console.info(`MessageId:${info.messageId}`);
+        if (text) console.info(`Content:\n${text}`);
+        console.info('ℹ️  Note: If the email does not appear in your inbox within a minute, check your SPAM/Junk folder.');
+        console.info('===========================================================================\n');
+      }
       return {
         success: true,
         delivered: true,
@@ -102,6 +112,21 @@ async function sendMail({ to, subject, html, text }) {
       };
     } catch (err) {
       console.error('[emailService] SMTP delivery error:', err.message);
+      if (env.nodeEnv !== 'production') {
+        console.warn('⚠️ SMTP failed to deliver. Falling back to development preview so you are not blocked:');
+        console.info('\n==================== [DEV EMAIL FALLBACK PREVIEW] ====================');
+        console.info(`To:      ${to}`);
+        console.info(`From:    ${from}`);
+        console.info(`Subject: ${subject}`);
+        if (text) console.info(`Content:\n${text}`);
+        console.info('======================================================================\n');
+        return {
+          success: true,
+          delivered: false,
+          mode: 'development_preview',
+          error: err.message,
+        };
+      }
       return {
         success: false,
         delivered: false,
