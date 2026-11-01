@@ -48,17 +48,19 @@ export function SocketProvider({ children }) {
 
     const onNotification = (notif) => {
       window.dispatchEvent(new Event('notifications:changed'));
-      if (notif?.title) {
-        toast.info(notif.title);
+      if (notif?.title && notif.type !== 'message') {
+        toast.showToast(notif.title);
       }
     };
 
-    const onNewMessageAlert = ({ sender, message }) => {
+    const onNewMessageAlert = ({ conversationId, sender, message }) => {
       window.dispatchEvent(new Event('notifications:changed'));
       // Don't toast if user is already looking at this thread
       const params = new URLSearchParams(window.location.search);
-      if (window.location.pathname !== '/messages' || params.get('with') !== String(sender?._id)) {
-        toast.info(`New message from ${sender?.name}: ${message?.text?.slice(0, 40)}…`);
+      const viewingDirect = params.get('with') === String(sender?._id);
+      const viewingGroup = params.get('group') && conversationId === `group_${params.get('group')}`;
+      if (window.location.pathname !== '/messages' || (!viewingDirect && !viewingGroup)) {
+        toast.showToast(`New message from ${sender?.name}: ${message?.text?.slice(0, 40)}…`);
       }
     };
 
@@ -74,6 +76,9 @@ export function SocketProvider({ children }) {
       s.off('presence:update', onPresence);
       s.off('notification', onNotification);
       s.off('new_message_alert', onNewMessageAlert);
+      s.disconnect();
+      setSocket(null);
+      setIsConnected(false);
     };
   }, [user]);
 

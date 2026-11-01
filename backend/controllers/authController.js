@@ -38,7 +38,7 @@ function validateCollegeEmail(email) {
 // POST /api/auth/register
 // Initiates user registration by validating details, creating an unverified account, and dispatching a 6-digit OTP via Brevo SMTP
 exports.register = asyncHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, employeeId, department, designation } = req.body;
   if (!name || !email || !password) throw new ApiError(400, 'Name, email and password are required');
 
   const { valid, normalized, domain } = validateCollegeEmail(email);
@@ -54,6 +54,21 @@ exports.register = asyncHandler(async (req, res) => {
   // Admin accounts can never be self-registered.
   if (role && !['student', 'alumni', 'teacher'].includes(role)) {
     throw new ApiError(400, 'Role must be student, alumni, or teacher');
+  }
+
+  const normalizedRole = role || 'student';
+  const teacherDetails = {
+    employeeId: typeof employeeId === 'string' ? employeeId.trim() : '',
+    department: typeof department === 'string' ? department.trim() : '',
+    designation: typeof designation === 'string' ? designation.trim() : '',
+  };
+  if (
+    normalizedRole === 'teacher' &&
+    (!teacherDetails.employeeId || !teacherDetails.department || !teacherDetails.designation)
+  ) {
+    throw new ApiError(400, 'Employee ID, department, and designation are required for teacher registration.', {
+      code: 'TEACHER_DETAILS_REQUIRED',
+    });
   }
 
   const existing = await User.findOne({ email: normalized });
@@ -117,7 +132,7 @@ exports.register = asyncHandler(async (req, res) => {
     lastSentAt: new Date(),
     metadata: {
       name: name.trim(),
-      role: role || 'student',
+      role: normalizedRole,
     },
   });
 
@@ -128,7 +143,7 @@ exports.register = asyncHandler(async (req, res) => {
       name: name.trim(),
       email: normalized,
       password,
-      role: role || 'student',
+      role: normalizedRole,
       isVerified: false,
       verificationStatus: 'pending',
       institution: env.collegeName,
@@ -137,7 +152,12 @@ exports.register = asyncHandler(async (req, res) => {
     if (user.role === 'student') {
       await StudentProfile.create({ user: user._id, fullName: user.name, college: env.collegeName });
     } else if (user.role === 'teacher') {
-      await TeacherProfile.create({ user: user._id, fullName: user.name, college: env.collegeName });
+      await TeacherProfile.create({
+        user: user._id,
+        fullName: user.name,
+        ...teacherDetails,
+        college: env.collegeName,
+      });
     } else if (user.role === 'alumni') {
       let existingProfile = await AlumniProfile.findOne({ email: user.email });
       if (existingProfile) {
@@ -158,10 +178,24 @@ exports.register = asyncHandler(async (req, res) => {
     // Update existing unverified user info
     user.name = name.trim();
     user.password = password;
-    user.role = role || 'student';
+    user.role = normalizedRole;
     user.isVerified = false;
     user.verificationStatus = 'pending';
     await user.save();
+
+    if (user.role === 'teacher') {
+      await TeacherProfile.findOneAndUpdate(
+        { user: user._id },
+        {
+          $set: {
+            fullName: user.name,
+            ...teacherDetails,
+            college: env.collegeName,
+          },
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true }
+      );
+    }
   }
 
   res.status(201).json({

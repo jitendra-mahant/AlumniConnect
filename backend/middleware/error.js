@@ -14,7 +14,11 @@ const errorHandler = (err, _req, res, _next) => {
     message = details[0] || 'Validation failed';
   } else if (err.name === 'CastError') {
     status = 400;
-    message = `Invalid ${err.path}`;
+    message = 'Invalid identifier';
+    console.warn('[error] Invalid database identifier', {
+      model: err.model?.modelName,
+      path: err.path,
+    });
   } else if (err.code === 11000) {
     status = 409;
     const field = Object.keys(err.keyPattern || {})[0] || 'value';

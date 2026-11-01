@@ -13,7 +13,13 @@ const baseURL = rawBaseUrl
   ? (rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`)
   : '/api';
 
-const api = axios.create({ baseURL });
+const api = axios.create({
+  baseURL,
+  timeout: 20000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 api.interceptors.request.use((config) => {
   const token = tokenStore.get();
@@ -28,9 +34,7 @@ api.interceptors.response.use(
     const url = err.config?.url || '';
     if (err.response?.status === 401 && !url.startsWith('/auth/login') && !url.startsWith('/auth/register')) {
       tokenStore.clear();
-      if (!['/login', '/register', '/'].includes(window.location.pathname)) {
-        window.location.assign('/login?expired=1');
-      }
+      window.dispatchEvent(new CustomEvent('auth:expired'));
     }
     return Promise.reject(err);
   }
@@ -39,8 +43,8 @@ api.interceptors.response.use(
 // Turn any axios error into a user-friendly message.
 export function errorMessage(err, fallback = 'Something went wrong. Please try again.') {
   if (err?.response?.data?.message) return err.response.data.message;
-  if (err?.code === 'ERR_NETWORK' || err?.message === 'Network Error') {
-    return 'Cannot reach the server. Make sure the backend is running.';
+  if (err?.code === 'ECONNABORTED' || err?.code === 'ERR_NETWORK' || err?.message === 'Network Error') {
+    return 'The server is taking too long to respond. Please try again in a moment.';
   }
   return fallback;
 }

@@ -3,9 +3,23 @@ const cors = require('cors');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
+const mongoose = require('mongoose');
 const env = require('./config/env');
 const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/error');
+const { bootstrapPrimaryAdmin } = require('./config/bootstrap');
+
+function getDatabaseHealth() {
+  const readyState = mongoose.connection.readyState;
+  const statuses = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+  const database = {
+    status: statuses[readyState] || 'unknown',
+    readyState,
+  };
+
+  if (readyState === 1) database.databaseName = mongoose.connection.name;
+  return database;
+}
 
 function createApp() {
   const app = express();
@@ -85,11 +99,30 @@ function createApp() {
   app.use('/api/auth/forgot-password', authLimiter);
   app.use('/api/auth/reset-password', authLimiter);
 
-  const healthHandler = (_req, res) =>
-    res.json({ success: true, status: 'ok', college: env.collegeName });
+  const healthHandler = (_req, res) => {
+    const database = getDatabaseHealth();
+    const connected = database.status === 'connected';
+    const health = {
+      success: connected,
+      server: 'running',
+      database,
+    };
+
+    return res.status(connected ? 200 : 503).json(health);
+  };
   app.get('/', healthHandler);
   app.get('/health', healthHandler);
   app.get('/api/health', healthHandler);
+
+  app.use('/api', (_req, res, next) => {
+    const database = getDatabaseHealth();
+    if (database.status === 'connected') return next();
+    return res.status(503).json({
+      success: false,
+      message: 'Database is not connected',
+      database,
+    });
+  });
 
   app.use('/api/auth', require('./routes/authRoutes'));
   app.use('/api/alumni', require('./routes/alumniRoutes'));
@@ -111,11 +144,18 @@ function createApp() {
 }
 
 const http = require('http');
-const { bootstrapPrimaryAdmin } = require('./config/bootstrap');
 const { initSocket } = require('./socket');
 
 async function start() {
   await connectDB();
+  if (
+    env.nodeEnv === 'production' &&
+    process.env.ADMIN_EMAIL &&
+    process.env.ADMIN_PASSWORD
+  ) {
+    await bootstrapPrimaryAdmin({ includeDemo: false });
+  }
+
   const app = createApp();
   const server = http.createServer(app);
   initSocket(server);
@@ -123,17 +163,12 @@ async function start() {
     console.log(`[server] AlumniConnect API and Real-Time Server running on http://localhost:${env.port}`)
   );
 
-  // Synchronize bootstrap accounts and legacy datasets asynchronously in background
-  bootstrapPrimaryAdmin().catch((err) => {
-    console.warn('[server] Non-fatal background bootstrap error:', err.message);
-  });
-
   return { app, server };
 }
 
 if (require.main === module) {
   start().catch((err) => {
-    console.error('[server] Fatal start error:', err.message);
+    console.error(`[server] Fatal start error (${err.name || 'Error'}).`);
     process.exit(1);
   });
 }

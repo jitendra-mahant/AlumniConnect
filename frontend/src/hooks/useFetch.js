@@ -7,30 +7,58 @@ import api, { errorMessage } from '../api/client';
  */
 export default function useFetch(path, params, { enabled = true } = {}) {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(enabled);
+  const [loading, setLoading] = useState(Boolean(enabled && path));
   const [error, setError] = useState('');
-  const key = JSON.stringify([path, params]);
+  const paramsKey = JSON.stringify(params ?? null);
   const latest = useRef(0);
+  const controllerRef = useRef(null);
 
   const load = useCallback(async () => {
-    if (!enabled || !path) return;
+    if (!enabled || !path) {
+      setLoading(false);
+      return;
+    }
+
     const ticket = ++latest.current;
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
     setLoading(true);
     setError('');
+
     try {
-      const res = await api.get(path, { params });
-      if (ticket === latest.current) setData(res.data);
+      const res = await api.get(path, { params, signal: controller.signal });
+      if (ticket !== latest.current) return;
+      setData(res.data);
     } catch (e) {
-      if (ticket === latest.current) setError(errorMessage(e));
+      if (e?.name === 'CanceledError' || e?.code === 'ERR_CANCELED') {
+        return;
+      }
+      if (ticket !== latest.current) return;
+      setData(null);
+      setError(errorMessage(e));
     } finally {
-      if (ticket === latest.current) setLoading(false);
+      if (ticket === latest.current) {
+        setLoading(false);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, enabled]);
+  }, [enabled, paramsKey, path]);
 
   useEffect(() => {
+    if (!enabled || !path) {
+      setData(null);
+      setLoading(false);
+      setError('');
+      return undefined;
+    }
+
     load();
-  }, [load]);
+
+    return () => {
+      controllerRef.current?.abort();
+    };
+  }, [load, enabled, path]);
 
   return { data, loading, error, reload: load, setData };
 }

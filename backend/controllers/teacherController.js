@@ -429,13 +429,41 @@ exports.createGroup = asyncHandler(async (req, res) => {
   const { title, description, department, academicYear, members, milestones, githubRepo, tags } = req.body;
   if (!title || !title.trim()) throw new ApiError(400, 'Project title is required');
 
+  const memberRoster = Array.isArray(members)
+    ? members.filter((member) => member && typeof member === 'object')
+    : [];
+  const memberEmails = [...new Set(
+    memberRoster
+      .map((member) => typeof member.email === 'string' ? member.email.trim().toLowerCase() : '')
+      .filter(Boolean)
+  )];
+  const registeredStudents = memberEmails.length
+    ? await User.find({
+        email: { $in: memberEmails },
+        role: 'student',
+        status: 'active',
+        isVerified: { $ne: false },
+        verificationStatus: 'verified',
+      }).select('_id email').lean()
+    : [];
+  const studentsByEmail = new Map(
+    registeredStudents.map((student) => [student.email, student._id])
+  );
+  const linkedMembers = memberRoster.map((member) => {
+    const rosterEntry = { ...member };
+    delete rosterEntry.student;
+    const email = typeof member.email === 'string' ? member.email.trim().toLowerCase() : '';
+    const studentId = studentsByEmail.get(email);
+    return studentId ? { ...rosterEntry, student: studentId } : rosterEntry;
+  });
+
   const group = new ProjectGroup({
     title: title.trim(),
     description: description ? description.trim() : '',
     department: department || 'Computer Engineering',
     academicYear: academicYear || '2025-2026',
     assignedTeacher: req.user._id,
-    members: Array.isArray(members) ? members : [],
+    members: linkedMembers,
     milestones: Array.isArray(milestones) ? milestones : [],
     githubRepo: githubRepo ? githubRepo.trim() : '',
     tags: Array.isArray(tags) ? tags : [],

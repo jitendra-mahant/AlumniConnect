@@ -51,7 +51,7 @@ const PRIMARY_ALUMNI = {
 /**
  * Idempotently ensures primary administrator, demo teacher, demo student, demo alumni, and initial project groups exist.
  */
-async function bootstrapPrimaryAdmin() {
+async function bootstrapPrimaryAdmin({ includeDemo = true } = {}) {
   try {
     // 1. Ensure primary admin exists
     let admin = await User.findOne({ email: PRIMARY_ADMIN.email });
@@ -74,6 +74,8 @@ async function bootstrapPrimaryAdmin() {
         console.log(`[bootstrap] Primary administrator updated: ${PRIMARY_ADMIN.email}`);
       }
     }
+
+    if (!includeDemo) return;
 
     // 2. Ensure faculty guide / placement office account exists
     let teacher = await User.findOne({ email: PRIMARY_TEACHER.email });

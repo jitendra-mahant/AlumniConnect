@@ -47,6 +47,10 @@ router.post("/profile", authorize("alumni"), c.createProfile);
 router.put("/profile", authorize("alumni"), c.updateProfile);
 router.put("/profile/privacy", authorize("alumni"), c.updatePrivacy);
 
+// Endorsements & Gamification Badges
+router.post("/:id/endorse", requireVerified, c.endorseAlumni);
+router.post("/:id/badge", authorize("admin"), c.manageBadge);
+
 router.get("/", requireVerified, c.searchAlumni);
 router.get("/:id", c.getAlumni);
 

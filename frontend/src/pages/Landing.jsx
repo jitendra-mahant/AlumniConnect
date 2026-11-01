@@ -58,7 +58,7 @@ const STEPS = [
 ];
 
 export default function Landing() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const { data } = useFetch('/public/stats');
@@ -79,12 +79,26 @@ export default function Landing() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <ThemeFontToolbar light />
+            <ThemeFontToolbar light dropUp={false} />
 
             {user ? (
-              <Link to={appHome} className="btn bg-white text-navy-800 hover:bg-navy-50 font-bold shadow-sm">
-                Go to app <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="flex items-center gap-2">
+                <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs text-white">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  {user.name?.split(' ')[0] || user.role} ({user.role})
+                </span>
+                <Link to={appHome} className="btn bg-white text-navy-800 hover:bg-navy-50 font-bold shadow-sm">
+                  Go to app <ArrowRight className="h-4 w-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={logout}
+                  title="Sign out of current account"
+                  className="btn text-white/80 hover:text-white hover:bg-white/10 text-xs px-2.5 py-1.5 font-medium"
+                >
+                  Log out
+                </button>
+              </div>
             ) : (
               <>
                 <Link to="/login" className="btn text-white hover:bg-white/10">
@@ -140,13 +154,13 @@ export default function Landing() {
             </form>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/register" className="btn bg-brand-500 text-white hover:bg-brand-400 font-semibold shadow-sm">
+              <Link to="/register?role=student" className="btn bg-brand-500 text-white hover:bg-brand-400 font-semibold shadow-sm">
                 I'm a student <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to="/register?role=alumni" className="btn border border-white/30 text-white hover:bg-white/10 font-semibold">
                 I'm an alumnus
               </Link>
-              <Link to="/login" className="btn border border-brand-300/40 bg-brand-500/10 text-brand-200 hover:bg-brand-500/20 font-semibold">
+              <Link to="/register?role=teacher" className="btn border border-brand-300/40 bg-brand-500/10 text-brand-200 hover:bg-brand-500/20 font-semibold">
                 Teacher / Guide Portal
               </Link>
             </div>
@@ -157,18 +171,25 @@ export default function Landing() {
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-brand-500/30 to-transparent blur-2xl" />
             <div className="relative space-y-4 rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur shadow-2xl">
               {[
-                { n: 'Priya Sharma', r: 'Senior Software Engineer · Google', y: '2016', t: ['System Design', 'Java'] },
-                { n: 'Neha Kulkarni', r: 'Software Engineer II · Microsoft', y: '2019', t: ['React', 'TypeScript'] },
-                { n: 'Karan Malhotra', r: 'Data Scientist · Amazon', y: '2018', t: ['Python', 'ML'] },
+                { n: 'Priya Sharma', r: 'Senior Software Engineer · Google', y: '2016', b: '🌟 Top Mentor', t: ['System Design', 'Java'] },
+                { n: 'Neha Kulkarni', r: 'Software Engineer II · Microsoft', y: '2019', b: '🤝 Active Referrer', t: ['React', 'TypeScript'] },
+                { n: 'Karan Malhotra', r: 'Data Scientist · Amazon', y: '2018', b: '🏆 Alumni of the Year', t: ['Python', 'ML'] },
               ].map((p) => (
                 <div key={p.n} className="flex items-center gap-4 rounded-xl bg-white dark:bg-slate-800/90 p-4 shadow-lift transition hover:-translate-y-0.5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-navy-800 to-brand-500 font-display font-bold text-white shadow-sm">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-navy-800 to-brand-500 font-display font-bold text-white shadow-sm shrink-0">
                     {p.n.split(' ').map((w) => w[0]).join('')}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="flex items-center gap-1.5 font-display font-bold text-navy-950 dark:text-white">
-                      {p.n} <BadgeCheck className="h-4 w-4 text-emerald-500" />
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="flex items-center gap-1.5 font-display font-bold text-navy-950 dark:text-white">
+                        {p.n} <BadgeCheck className="h-4 w-4 text-emerald-500" />
+                      </p>
+                      {p.b && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800">
+                          {p.b}
+                        </span>
+                      )}
+                    </div>
                     <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                       {p.r} · Class of {p.y}
                     </p>

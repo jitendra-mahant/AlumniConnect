@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertCircle,
@@ -143,26 +143,37 @@ export default function TeacherDashboard() {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
 
-  // Data fetching
-  const { data: statsData, loading: statsLoading, reload: reloadStats } = useFetch('/teacher/stats');
+  // Data fetching - only load the data a tab needs to avoid unnecessary requests
+  const { data: statsData, loading: statsLoading, reload: reloadStats } = useFetch('/teacher/stats', undefined, {
+    enabled: mainTab === 'overview',
+  });
   const { data: groupsData, loading: groupsLoading, error: groupsError, reload: reloadGroups } = useFetch(
-    `/teacher/groups${groupFilterTab === 'at-risk' ? '?status=at-risk' : groupFilterTab === 'on-track' ? '?status=on-track' : ''}`
+    `/teacher/groups${groupFilterTab === 'at-risk' ? '?status=at-risk' : groupFilterTab === 'on-track' ? '?status=on-track' : ''}`,
+    undefined,
+    { enabled: mainTab === 'projects' }
   );
   const { data: studentsData, loading: studentsLoading, error: studentsError, reload: reloadStudents } = useFetch(
     '/teacher/students',
-    { q: studentSearch, department: studentDeptFilter }
+    { q: studentSearch, department: studentDeptFilter },
+    { enabled: mainTab === 'students' }
   );
   const { data: appointmentsData, loading: appointmentsLoading, error: appointmentsError, reload: reloadAppointments } = useFetch(
     '/teacher/appointments',
-    { status: appointmentFilter, type: appointmentTypeFilter }
+    { status: appointmentFilter, type: appointmentTypeFilter },
+    { enabled: mainTab === 'guidance' }
   );
   const { data: placementData, loading: placementLoading, error: placementError, reload: reloadPlacement } = useFetch(
-    '/teacher/placement-overview'
+    '/teacher/placement-overview',
+    undefined,
+    { enabled: mainTab === 'placement' }
   );
-  const { data: profileData, reload: reloadProfile } = useFetch('/teacher/profile');
+  const { data: profileData, reload: reloadProfile } = useFetch('/teacher/profile', undefined, {
+    enabled: mainTab === 'profile' || mainTab === 'overview',
+  });
 
-  // Sync profile form once loaded
-  if (profileData?.data && !profileLoaded) {
+  useEffect(() => {
+    if (!profileData?.data) return;
+
     setProfileForm({
       fullName: profileData.data.fullName || '',
       department: profileData.data.department || 'Computer Engineering',
@@ -174,7 +185,7 @@ export default function TeacherDashboard() {
         : profileData.data.specialization || '',
     });
     setProfileLoaded(true);
-  }
+  }, [profileData]);
 
   const reloadAll = () => {
     reloadStats();

@@ -53,6 +53,35 @@ async function seedDatabase({ log = console.log } = {}) {
   for (const a of data.alumni) {
     const user = await User.create({ name: a.name, email: a.email, password: data.PASSWORD, role: 'alumni' });
     const { name, verificationStatus = 'verified', ...rest } = a;
+
+    let badges = [];
+    let endorsements = [];
+
+    if (a.name === 'Priya Sharma') {
+      badges = [
+        { name: 'top_mentor', title: 'Top Mentor', icon: 'Award', description: 'Consistently rated 5 stars for high-impact technical guidance and system design mentorship.' },
+        { name: 'alumni_of_year', title: 'Alumni of the Year', icon: 'Trophy', description: 'Awarded by KKWAGH in 2025 for outstanding career achievements at Google.' },
+      ];
+      endorsements = [
+        { fromName: 'Aarav Mehta', fromRole: 'student', skillOrTopic: 'System Design', comment: 'Priya gave incredible architecture advice for my final year capstone project!' },
+        { fromName: 'Rohan Deshmukh', fromRole: 'student', skillOrTopic: 'Google Interview Prep', comment: 'Guided me through DSA fundamentals and mock behavioral rounds.' },
+      ];
+    } else if (a.name === 'Neha Kulkarni') {
+      badges = [
+        { name: 'active_referrer', title: 'Active Placement Referrer', icon: 'Handshake', description: 'Actively refers KKWAGH students to Microsoft frontend & full-stack roles.' },
+      ];
+      endorsements = [
+        { fromName: 'Aarav Mehta', fromRole: 'student', skillOrTopic: 'React & TypeScript', comment: 'Helped me understand real-world enterprise React patterns.' },
+      ];
+    } else if (a.name === 'Karan Malhotra') {
+      badges = [
+        { name: 'top_mentor', title: 'Top Mentor', icon: 'Award', description: 'Helped 10+ students land machine learning and data engineering internships.' },
+      ];
+      endorsements = [
+        { fromName: 'Ishita Verma', fromRole: 'student', skillOrTopic: 'Machine Learning', comment: 'Awesome mentor! Walked through end-to-end ML deployment on AWS.' },
+      ];
+    }
+
     await AlumniProfile.create({
       ...rest,
       user: user._id,
@@ -61,6 +90,8 @@ async function seedDatabase({ log = console.log } = {}) {
       batch: `${a.graduationYear - 4}-${a.graduationYear}`,
       previousCompanies: (a.experience || []).map((e) => e.company),
       previousJobTitles: (a.experience || []).map((e) => e.title),
+      badges,
+      endorsements,
       verificationStatus,
       verifiedAt: verificationStatus === 'verified' ? new Date() : undefined,
     });
@@ -189,26 +220,12 @@ async function seedDatabase({ log = console.log } = {}) {
 module.exports = { seedDatabase };
 
 if (require.main === module) {
-  const net = require('net');
-  const isPortOpen = (port, host = '127.0.0.1', timeout = 800) =>
-    new Promise((resolve) => {
-      const s = new net.Socket();
-      s.setTimeout(timeout);
-      s.on('connect', () => { s.destroy(); resolve(true); });
-      s.on('timeout', () => { s.destroy(); resolve(false); });
-      s.on('error', () => { s.destroy(); resolve(false); });
-      s.connect(port, host);
-    });
-
   (async () => {
     try {
-      const uri =
-        process.env.MONGODB_URI ||
-        ((await isPortOpen(27018)) ? 'mongodb://127.0.0.1:27018/alumniconnect' : env.mongoUri);
-      await connectDB(uri);
+      await connectDB();
       await seedDatabase();
     } catch (err) {
-      console.error('[seed] failed:', err.message);
+      console.error(`[seed] failed (${err.name || 'Error'}). Check the database configuration and connection logs.`);
       process.exitCode = 1;
     } finally {
       await mongoose.disconnect();

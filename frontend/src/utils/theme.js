@@ -6,15 +6,15 @@ export const FONTS = [
     preview: 'Clean & Professional',
   },
   {
-    id: 'roboto',
-    label: 'Roboto — Modern Round',
-    value: "'Roboto', Arial, sans-serif",
-    preview: 'Friendly & Geometric',
+    id: 'helvetica',
+    label: 'Helvetica — Clean Sans',
+    value: 'Helvetica, Arial, sans-serif',
+    preview: 'Crisp & Modern',
   },
   {
     id: 'times',
     label: 'Times New Roman — Serif',
-    value: "'Times New Roman', Times, Georgia, serif",
+    value: "'Times New Roman', Times, serif",
     preview: 'Classic & Editorial',
   },
 ];
@@ -42,12 +42,7 @@ export function applyTheme(theme) {
 export function getInitialFont() {
   if (typeof window === 'undefined') return 'arial';
   const saved = localStorage.getItem('alumniconnect_font');
-  // Migrate legacy 'helvetica' preference to 'roboto' (helvetica is unavailable on Windows)
-  if (saved === 'helvetica') {
-    localStorage.setItem('alumniconnect_font', 'roboto');
-    return 'roboto';
-  }
-  if (saved === 'roboto' || saved === 'times' || saved === 'arial') return saved;
+  if (saved === 'helvetica' || saved === 'times' || saved === 'arial') return saved;
   // All other/legacy font keys strictly fallback to 'arial'
   return 'arial';
 }

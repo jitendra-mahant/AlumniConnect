@@ -5,6 +5,7 @@ const teacherProfileSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
     fullName: { type: String, required: true, trim: true },
+    employeeId: { type: String, trim: true, default: '' },
     profilePhoto: { type: String, trim: true, default: '' },
     department: { type: String, trim: true, default: 'Computer Engineering' },
     designation: { type: String, trim: true, default: 'Assistant Professor & Project Guide' },

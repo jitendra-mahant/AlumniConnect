@@ -140,10 +140,11 @@ function resolveCSVPaths() {
   ];
 
   const candidateDirs = [
-    path.resolve(__dirname, '../../../fer'),
-    path.resolve(__dirname, '../../fer'),
     path.resolve(__dirname, '../../data'),
     path.resolve(__dirname, '../data'),
+    path.resolve(process.cwd(), 'data'),
+    path.resolve(__dirname, '../../../fer'),
+    path.resolve(__dirname, '../../fer'),
     path.resolve(__dirname, '../../'),
     path.resolve(process.cwd(), 'fer'),
     path.resolve(process.cwd()),
@@ -473,8 +474,13 @@ async function importCsvAlumni(options = {}) {
     try {
       const existingRawCount = await aluminiCollection.countDocuments({ graduationYear: 2022 });
       if (existingRawCount === 0) {
-        const jsonPath = path.resolve(__dirname, '../../db_alumini_years.alumini.json');
-        if (fs.existsSync(jsonPath)) {
+        const candidateJsonPaths = [
+          path.resolve(__dirname, '../../data/db_alumini_years.alumini.json'),
+          path.resolve(__dirname, '../../db_alumini_years.alumini.json'),
+          path.resolve(process.cwd(), 'data/db_alumini_years.alumini.json'),
+        ];
+        const jsonPath = candidateJsonPaths.find((p) => fs.existsSync(p));
+        if (jsonPath) {
           const rawJsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
           if (Array.isArray(rawJsonData) && rawJsonData.length > 0) {
             for (const item of rawJsonData) {

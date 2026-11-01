@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const AlumniProfile = require('../models/AlumniProfile');
 const StudentProfile = require('../models/StudentProfile');
 const User = require('../models/User');
@@ -7,7 +8,11 @@ const User = require('../models/User');
  * so list endpoints can show people without exposing sensitive user fields.
  */
 async function getDisplayMap(userIds) {
-  const ids = [...new Set(userIds.filter(Boolean).map(String))];
+  const ids = [...new Set(
+    userIds
+      .filter((id) => id && mongoose.Types.ObjectId.isValid(id))
+      .map(String)
+  )];
   if (!ids.length) return {};
 
   const [users, alumni, students] = await Promise.all([

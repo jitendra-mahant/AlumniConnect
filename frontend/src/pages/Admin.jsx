@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  AlertTriangle, BadgeCheck, BriefcaseBusiness, Building2, Check, CheckCircle2,
+  AlertTriangle, Award, BadgeCheck, BriefcaseBusiness, Building2, Check, CheckCircle2,
   ChevronDown, ChevronUp, Copy, Download, FileSpreadsheet, FileText, Flag, Handshake, HandHeart,
   HelpCircle, History, KeyRound, Loader2, MessageSquare, Printer, RefreshCw,
   Search, ShieldAlert, ShieldCheck, Trash2, UserCheck, UserX, Users, X,
@@ -719,11 +719,92 @@ function Overview({ onGo }) {
   );
 }
 
+function BadgeModal({ open, onClose, alumni, onDone }) {
+  const toast = useToast();
+  const [busyBadge, setBusyBadge] = useState('');
+
+  const BADGES = [
+    { name: 'top_mentor', title: 'Top Mentor', icon: '🌟', desc: 'Outstanding student guidance & career advice' },
+    { name: 'alumni_of_year', title: 'Alumni of the Year', icon: '🏆', desc: 'Distinguished alumni honored by KKWAGH' },
+    { name: 'active_referrer', title: 'Active Placement Referrer', icon: '🤝', desc: 'Provides active referrals and corporate job leads' },
+    { name: 'star_contributor', title: 'Star Contributor', icon: '⭐', desc: 'Frequently helps in Q&A forum and project reviews' },
+  ];
+
+  const currentBadgeNames = (alumni?.badges || []).map((b) => b.name);
+
+  const toggle = async (b) => {
+    const hasBadge = currentBadgeNames.includes(b.name);
+    const action = hasBadge ? 'revoke' : 'award';
+    setBusyBadge(b.name);
+    try {
+      const res = await api.post(`/alumni/${alumni._id}/badge`, {
+        badgeName: b.name,
+        action,
+      });
+      toast.success(res.data?.message || 'Updated badge status.');
+      onDone?.();
+      onClose();
+    } catch (e) {
+      toast.error(errorMessage(e));
+    } finally {
+      setBusyBadge('');
+    }
+  };
+
+  return (
+    <Modal open={open} onClose={onClose} title={`Manage Badges for ${alumni?.fullName}`}>
+      <div className="space-y-3">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Award or revoke institutional honors and recognition badges for this alumnus.
+        </p>
+        <div className="space-y-2.5">
+          {BADGES.map((b) => {
+            const hasBadge = currentBadgeNames.includes(b.name);
+            return (
+              <div
+                key={b.name}
+                className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50"
+              >
+                <div className="flex items-start gap-2.5">
+                  <span className="text-xl">{b.icon}</span>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{b.title}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{b.desc}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  disabled={busyBadge === b.name}
+                  onClick={() => toggle(b)}
+                  className={`btn btn-sm ${
+                    hasBadge
+                      ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800'
+                      : 'btn-accent'
+                  }`}
+                >
+                  {busyBadge === b.name ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : hasBadge ? (
+                    'Revoke'
+                  ) : (
+                    'Award'
+                  )}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
 function VerifyAlumni() {
   const toast = useToast();
   const [status, setStatus] = useState('pending');
   const { data, loading, error, reload } = useFetch('/admin/alumni', { status });
   const [rejecting, setRejecting] = useState(null);
+  const [managingBadge, setManagingBadge] = useState(null);
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState('');
 

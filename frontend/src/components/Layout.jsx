@@ -55,6 +55,7 @@ const NAV = {
   ],
   admin: [
     { to: '/admin', label: 'Admin Portal', icon: ShieldCheck },
+    { to: '/messages', label: 'Messages', icon: MessageSquare },
     { to: '/alumni', label: 'Alumni Directory', icon: Users },
     { to: '/qa', label: 'Q&A Forum', icon: HelpCircle },
     { to: '/jobs', label: 'Opportunities', icon: BriefcaseBusiness },

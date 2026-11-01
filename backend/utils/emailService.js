@@ -175,7 +175,7 @@ async function sendVerificationOtpEmail(toEmail, otp, name = 'Student / Alumnus'
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Verify your AlumniConnect Email</title>
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+          body { font-family: Arial, Helvetica, "Times New Roman", sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
           .container { max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
           .header { text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; }
           .logo { font-size: 22px; font-weight: 800; color: #1e3a8a; letter-spacing: -0.5px; }
@@ -243,7 +243,7 @@ async function sendPasswordResetOtpEmail(toEmail, otp, name = 'User') {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Reset your AlumniConnect Password</title>
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+          body { font-family: Arial, Helvetica, "Times New Roman", sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
           .container { max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
           .header { text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; }
           .logo { font-size: 22px; font-weight: 800; color: #0d9488; letter-spacing: -0.5px; }
@@ -309,7 +309,7 @@ async function sendVerificationEmail(user, rawToken) {
       <head>
         <meta charset="utf-8" />
         <style>
-          body { font-family: Arial, Helvetica, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+          body { font-family: Arial, Helvetica, "Times New Roman", sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
           .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 32px; }
           .header { text-align: center; margin-bottom: 24px; }
           .logo { font-size: 22px; font-weight: 800; color: #1e3a8a; }
@@ -366,7 +366,7 @@ async function sendPasswordResetEmail(user, rawToken) {
       <head>
         <meta charset="utf-8" />
         <style>
-          body { font-family: Arial, Helvetica, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+          body { font-family: Arial, Helvetica, "Times New Roman", sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
           .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 32px; }
           .header { text-align: center; margin-bottom: 24px; }
           .logo { font-size: 22px; font-weight: 800; color: #0d9488; }
@@ -420,7 +420,7 @@ async function sendNotificationEmail(toEmail, { title, body, actionUrl, actionTe
       <head>
         <meta charset="utf-8" />
         <style>
-          body { font-family: Arial, Helvetica, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+          body { font-family: Arial, Helvetica, "Times New Roman", sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
           .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 32px; }
           .logo { font-size: 20px; font-weight: 800; color: #1e3a8a; }
           .title { font-size: 18px; font-weight: 700; color: #0f172a; margin-top: 16px; margin-bottom: 8px; }

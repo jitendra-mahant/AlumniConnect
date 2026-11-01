@@ -612,5 +612,146 @@ exports.yearOverview = asyncHandler(async (req, res) => {
   });
 });
 
+// POST /api/alumni/:id/endorse
+// Endorse an alumnus for a specific skill or topic
+exports.endorseAlumni = asyncHandler(async (req, res) => {
+  assertId(req.params.id);
+  const { skillOrTopic, comment } = req.body;
+  if (!skillOrTopic || !skillOrTopic.trim()) {
+    throw new ApiError(400, 'Skill or topic to endorse is required.');
+  }
+
+  const profile = await AlumniProfile.findById(req.params.id);
+  if (!profile) throw new ApiError(404, 'Alumni profile not found.');
+
+  // Prevent self-endorsement
+  if (profile.user && String(profile.user) === String(req.user._id)) {
+    throw new ApiError(400, 'You cannot endorse your own profile.');
+  }
+
+  // Ensure endorsements array exists
+  if (!Array.isArray(profile.endorsements)) {
+    profile.endorsements = [];
+  }
+
+  const cleanSkill = skillOrTopic.trim();
+  const cleanComment = (comment || '').trim();
+
+  // Check if user already endorsed this specific skill
+  const existingIndex = profile.endorsements.findIndex(
+    (e) => String(e.fromUser) === String(req.user._id) && e.skillOrTopic.toLowerCase() === cleanSkill.toLowerCase()
+  );
+
+  if (existingIndex >= 0) {
+    profile.endorsements[existingIndex].comment = cleanComment;
+    profile.endorsements[existingIndex].createdAt = new Date();
+  } else {
+    profile.endorsements.push({
+      fromUser: req.user._id,
+      fromName: req.user.name,
+      fromRole: req.user.role,
+      skillOrTopic: cleanSkill,
+      comment: cleanComment,
+      createdAt: new Date(),
+    });
+  }
+
+  // Gamification check: Auto-award "Top Mentor" badge if 3+ endorsements
+  if (!Array.isArray(profile.badges)) profile.badges = [];
+  const hasTopMentor = profile.badges.some((b) => b.name === 'top_mentor');
+  if (!hasTopMentor && profile.endorsements.length >= 3) {
+    profile.badges.push({
+      name: 'top_mentor',
+      title: 'Top Mentor',
+      icon: 'Award',
+      description: 'Recognized by junior students and peers for outstanding mentorship and career advice.',
+      awardedAt: new Date(),
+    });
+  }
+
+  await profile.save();
+
+  // Notify the alumnus
+  if (profile.user) {
+    const Notification = require('../models/Notification');
+    await Notification.create({
+      user: profile.user,
+      type: 'endorsement',
+      title: 'New Skill Endorsement!',
+      body: `${req.user.name} endorsed you for "${cleanSkill}".`,
+      data: { alumnusId: profile._id },
+    }).catch(() => {});
+  }
+
+  res.json({
+    success: true,
+    message: `Successfully endorsed ${profile.fullName} for ${cleanSkill}!`,
+    data: sanitizeAlumni(profile.toObject(), req.user),
+  });
+});
+
+// POST /api/alumni/:id/badge (Admin only)
+exports.manageBadge = asyncHandler(async (req, res) => {
+  assertId(req.params.id);
+  const { badgeName, action } = req.body; // action: 'award' | 'revoke'
+
+  const BADGE_PRESETS = {
+    top_mentor: {
+      name: 'top_mentor',
+      title: 'Top Mentor',
+      icon: 'Award',
+      description: 'Recognized by the community for outstanding mentorship and career guidance.',
+    },
+    alumni_of_year: {
+      name: 'alumni_of_year',
+      title: 'Alumni of the Year',
+      icon: 'Trophy',
+      description: 'Prestigious distinction honored by KKWAGH for stellar career and institutional contributions.',
+    },
+    active_referrer: {
+      name: 'active_referrer',
+      title: 'Active Placement Referrer',
+      icon: 'Handshake',
+      description: 'Consistently provides verified job referrals and placement leads to KKWAGH students.',
+    },
+    star_contributor: {
+      name: 'star_contributor',
+      title: 'Star Contributor',
+      icon: 'Star',
+      description: 'Active contributor in campus Q&A discussions, webinars, and capstone project reviews.',
+    },
+  };
+
+  const preset = BADGE_PRESETS[badgeName];
+  if (!preset) {
+    throw new ApiError(400, `Unknown badge "${badgeName}". Available: ${Object.keys(BADGE_PRESETS).join(', ')}`);
+  }
+
+  const profile = await AlumniProfile.findById(req.params.id);
+  if (!profile) throw new ApiError(404, 'Alumni profile not found.');
+
+  if (!Array.isArray(profile.badges)) profile.badges = [];
+
+  if (action === 'revoke') {
+    profile.badges = profile.badges.filter((b) => b.name !== badgeName);
+  } else {
+    // Award
+    if (!profile.badges.some((b) => b.name === badgeName)) {
+      profile.badges.push({
+        ...preset,
+        awardedAt: new Date(),
+      });
+    }
+  }
+
+  await profile.save();
+
+  res.json({
+    success: true,
+    message: action === 'revoke' ? `Revoked badge "${preset.title}"` : `Awarded badge "${preset.title}"`,
+    data: sanitizeAlumni(profile.toObject(), req.user),
+  });
+});
+
 exports.sanitizeAlumni = sanitizeAlumni;
 exports.buildSearchQuery = buildSearchQuery;

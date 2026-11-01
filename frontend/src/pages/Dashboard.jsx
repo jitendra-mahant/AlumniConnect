@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -171,13 +171,19 @@ export default function Dashboard() {
   );
   const jobs = useFetch('/jobs', { limit: 3 }, { enabled: isStudent });
 
-  const all = conns.data?.data || [];
-  const incoming = all.filter((c) => c.status === 'pending' && c.direction === 'received');
-  const sentPending = all.filter((c) => c.status === 'pending' && c.direction === 'sent');
-  const accepted = all.filter((c) => c.status === 'accepted');
+  const all = useMemo(() => conns.data?.data || [], [conns.data]);
+  const incoming = useMemo(() => all.filter((c) => c.status === 'pending' && c.direction === 'received'), [all]);
+  const sentPending = useMemo(() => all.filter((c) => c.status === 'pending' && c.direction === 'sent'), [all]);
+  const accepted = useMemo(() => all.filter((c) => c.status === 'accepted'), [all]);
 
-  const mActive = (mentorship.data?.data || []).filter((m) => ['pending', 'accepted'].includes(m.status));
-  const rPending = (referrals.data?.data || []).filter((r) => r.status === 'pending');
+  const mActive = useMemo(
+    () => (mentorship.data?.data || []).filter((m) => ['pending', 'accepted'].includes(m.status)),
+    [mentorship.data]
+  );
+  const rPending = useMemo(
+    () => (referrals.data?.data || []).filter((r) => r.status === 'pending'),
+    [referrals.data]
+  );
 
   const stats = publicStats.data?.data;
 

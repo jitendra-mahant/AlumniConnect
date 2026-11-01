@@ -1,50 +1,27 @@
 const { Server } = require('socket.io');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const env = require('./config/env');
 const User = require('./models/User');
 const Message = require('./models/Message');
-const Connection = require('./models/Connection');
-const AlumniProfile = require('./models/AlumniProfile');
-const { notify } = require('./utils/notify');
+const { canMessage, canOpenDirect, getGroupForUser, isVerified } = require('./services/messageAccess');
+const {
+  createDirectMessage,
+  createGroupMessage,
+} = require('./controllers/messageController');
 
 let io = null;
 const onlineUsers = new Map(); // userId string -> connection count
 
-/**
- * Validates whether two users are permitted to exchange direct messages.
- */
-async function canMessage(sender, recipient) {
-  if (!sender || !recipient) return false;
-  if (sender.role === 'admin' || recipient.role === 'admin') return false;
-
-  // Teacher <-> Student communication (project guidance & PBL mentoring)
-  if (
-    (sender.role === 'teacher' && recipient.role === 'student') ||
-    (sender.role === 'student' && recipient.role === 'teacher')
-  ) {
-    return true;
+function socketErrorMessage(error, fallback) {
+  if (error?.name === 'CastError') {
+    console.warn('[socket] Invalid database identifier', {
+      model: error.model?.modelName,
+      path: error.path,
+    });
+    return 'Invalid identifier.';
   }
-
-  // Accepted connection always allows messaging
-  const connected = await Connection.exists({
-    status: 'accepted',
-    $or: [
-      { requester: sender._id, recipient: recipient._id },
-      { requester: recipient._id, recipient: sender._id },
-    ],
-  });
-  if (connected) return true;
-
-  // Reply permitted if previous message exists
-  if (await Message.exists({ sender: recipient._id, recipient: sender._id })) return true;
-
-  // Student messaging verified alumnus who opted into student questions
-  if (sender.role === 'student' && recipient.role === 'alumni') {
-    const profile = await AlumniProfile.findOne({ user: recipient._id }).select('availableForStudentQuestions verificationStatus');
-    return !!profile && profile.verificationStatus === 'verified' && profile.availableForStudentQuestions;
-  }
-
-  return false;
+  return error?.message || fallback;
 }
 
 function initSocket(httpServer) {
@@ -97,15 +74,12 @@ function initSocket(httpServer) {
       }
 
       const decoded = jwt.verify(token, env.jwtSecret);
-      const user = await User.findById(decoded.id).select('_id name email role status');
+      const user = await User.findById(decoded.id).select('_id name role status isVerified verificationStatus');
 
       if (!user) {
         return next(new Error('User does not exist'));
       }
-
-      if (user.status === 'suspended') {
-        return next(new Error('User account has been suspended'));
-      }
+      if (!isVerified(user)) return next(new Error('Account is not authorized for messaging'));
 
       socket.user = user;
       next();
@@ -133,85 +107,89 @@ function initSocket(httpServer) {
     });
 
     // Join private 1:1 conversation room with participant verification
-    socket.on('join_conversation', ({ conversationId }) => {
-      if (!conversationId || typeof conversationId !== 'string') return;
+    socket.on('join_conversation', async (payload = {}, callback) => {
+      try {
+        const { conversationId } = payload && typeof payload === 'object' ? payload : {};
+        if (typeof conversationId !== 'string' || conversationId.length > 100) {
+          throw new Error('Invalid conversation');
+        }
 
-      // Verify that this user is actually part of this deterministic conversation key
-      const parts = conversationId.split('_');
-      if (!parts.includes(userId)) {
-        socket.emit('error', { message: 'Unauthorized conversation access' });
-        return;
+        if (conversationId.startsWith('group_')) {
+          const groupId = conversationId.slice(6);
+          if (!mongoose.Types.ObjectId.isValid(groupId)) throw new Error('Invalid conversation');
+          if (!(await getGroupForUser(socket.user, groupId))) {
+            throw new Error('Unauthorized project group access');
+          }
+        } else {
+          const participantIds = conversationId.split('_');
+          if (
+            participantIds.length !== 2 ||
+            participantIds.some((id) => !mongoose.Types.ObjectId.isValid(id)) ||
+            !participantIds.includes(userId)
+          ) {
+            throw new Error('Unauthorized conversation access');
+          }
+          const otherId = participantIds.find((id) => id !== userId);
+          const peer = await User.findById(otherId).select('_id name role status isVerified verificationStatus');
+          if (!peer || !(await canOpenDirect(socket.user, peer)) ||
+              Message.makeConversationId(socket.user._id, peer._id) !== conversationId) {
+            throw new Error('Unauthorized conversation access');
+          }
+        }
+
+        await socket.join(`conversation:${conversationId}`);
+        if (typeof callback === 'function') callback({ success: true });
+      } catch (err) {
+        if (typeof callback === 'function') callback({ error: socketErrorMessage(err, 'Could not join this conversation.') });
       }
-
-      socket.join(`conversation:${conversationId}`);
     });
 
     // Leave conversation room
-    socket.on('leave_conversation', ({ conversationId }) => {
-      if (conversationId) {
+    socket.on('leave_conversation', (payload = {}) => {
+      const { conversationId } = payload && typeof payload === 'object' ? payload : {};
+      if (typeof conversationId === 'string') {
         socket.leave(`conversation:${conversationId}`);
       }
     });
 
     // Live send message via socket
-    socket.on('send_message', async ({ recipientId, text }, callback) => {
+    socket.data.messageTimestamps = [];
+    socket.on('send_message', async (payload = {}, callback) => {
       try {
-        if (!recipientId || !text || !String(text).trim()) {
-          if (typeof callback === 'function') callback({ error: 'Recipient and message text are required' });
-          return;
+        const { recipientId, groupId, text } = payload && typeof payload === 'object' ? payload : {};
+        const now = Date.now();
+        socket.data.messageTimestamps = socket.data.messageTimestamps.filter((time) => now - time < 10000);
+        if (socket.data.messageTimestamps.length >= 15) {
+          throw new Error('You are sending messages too quickly. Please wait a moment.');
         }
-
-        const recipient = await User.findById(recipientId);
-        if (!recipient || recipient.status !== 'active') {
-          if (typeof callback === 'function') callback({ error: 'Recipient not found or inactive' });
-          return;
+        socket.data.messageTimestamps.push(now);
+        if (typeof text !== 'string' || !text.trim() || text.trim().length > 2000) {
+          throw new Error('Message text must contain 1 to 2000 characters.');
         }
-
-        const allowed = await canMessage(socket.user, recipient);
-        if (!allowed) {
-          if (typeof callback === 'function') {
-            callback({ error: 'Messaging not permitted between these accounts without a connection.' });
-          }
-          return;
+        if (recipientId && groupId) throw new Error('Send to a user or group, not both.');
+        let message;
+        if (groupId) {
+          if (!mongoose.Types.ObjectId.isValid(groupId)) throw new Error('Invalid project group');
+          message = await createGroupMessage(socket.user, groupId, text.trim());
+        } else {
+          if (!mongoose.Types.ObjectId.isValid(recipientId)) throw new Error('Recipient is required.');
+          const recipient = await User.findById(recipientId)
+            .select('_id name role status isVerified verificationStatus');
+          if (!recipient || recipient.status !== 'active') throw new Error('Recipient not found or inactive');
+          message = await createDirectMessage(socket.user, recipient, text.trim());
         }
-
-        const conversationId = Message.makeConversationId(socket.user._id, recipient._id);
-        const message = await Message.create({
-          conversationId,
-          sender: socket.user._id,
-          recipient: recipient._id,
-          text: String(text).trim(),
-        });
-
-        // Broadcast to conversation room and to both user rooms
-        io.to(`conversation:${conversationId}`).emit('new_message', message);
-        io.to(`user:${String(recipient._id)}`).emit('new_message_alert', {
-          conversationId,
-          message,
-          sender: { _id: socket.user._id, name: socket.user.name },
-        });
-
-        // Trigger notification
-        await notify(recipient._id, {
-          type: 'message',
-          title: `New message from ${socket.user.name}`,
-          body: String(text).slice(0, 100),
-          link: `/messages?with=${socket.user._id}`,
-        });
-
-        if (typeof callback === 'function') {
-          callback({ success: true, data: message });
-        }
+        if (typeof callback === 'function') callback({ success: true, data: message });
       } catch (err) {
         if (typeof callback === 'function') {
-          callback({ error: err.message || 'Failed to deliver message' });
+          callback({ error: socketErrorMessage(err, 'Failed to deliver message.') });
         }
       }
     });
 
     // Typing indicators
-    socket.on('typing_start', ({ conversationId }) => {
-      if (conversationId && conversationId.includes(userId)) {
+    socket.on('typing_start', (payload = {}) => {
+      const { conversationId } = payload && typeof payload === 'object' ? payload : {};
+      if (typeof conversationId === 'string' && socket.rooms.has(`conversation:${conversationId}`)) {
         socket.to(`conversation:${conversationId}`).emit('typing:status', {
           conversationId,
           userId,
@@ -220,8 +198,9 @@ function initSocket(httpServer) {
       }
     });
 
-    socket.on('typing_stop', ({ conversationId }) => {
-      if (conversationId && conversationId.includes(userId)) {
+    socket.on('typing_stop', (payload = {}) => {
+      const { conversationId } = payload && typeof payload === 'object' ? payload : {};
+      if (typeof conversationId === 'string' && socket.rooms.has(`conversation:${conversationId}`)) {
         socket.to(`conversation:${conversationId}`).emit('typing:status', {
           conversationId,
           userId,

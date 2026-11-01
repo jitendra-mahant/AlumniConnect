@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Award, BadgeCheck, BookOpen, Briefcase, Building2, Check, CheckCircle2, Clock, ExternalLink, Flag, Github, GraduationCap,
   Globe, HandHeart, Handshake, Languages, Linkedin, Loader2, Lock, MapPin, MessageSquare, Network, Pencil, UserPlus, XCircle, Mail,
+  Sparkles, ThumbsUp,
 } from 'lucide-react';
 import api, { errorMessage } from '../api/client';
 import useFetch from '../hooks/useFetch';
@@ -41,6 +42,100 @@ function helpItems(a) {
     { label: 'Interview Preparation', icon: BookOpen, on: has('Interview Preparation'), text: 'Mock interviews, question banks and feedback.' },
     { label: 'Technical Guidance', icon: Network, on: has('Technical Guidance'), text: 'Help with skills, projects and tech choices.' },
   ];
+}
+
+function EndorseModal({ open, onClose, alumni, onDone }) {
+  const toast = useToast();
+  const [skill, setSkill] = useState('');
+  const [comment, setComment] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const availableSkills = [...new Set([...(alumni.skills || []), ...(alumni.technologies || [])])];
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!skill.trim()) return toast.error('Please choose or enter a skill/topic to endorse.');
+    setBusy(true);
+    try {
+      const res = await api.post(`/alumni/${alumni._id}/endorse`, {
+        skillOrTopic: skill.trim(),
+        comment: comment.trim(),
+      });
+      toast.success(res.data?.message || 'Endorsement submitted successfully!');
+      setSkill('');
+      setComment('');
+      onDone?.();
+      onClose();
+    } catch (err) {
+      toast.error(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`Endorse ${alumni.fullName}`}
+      footer={
+        <>
+          <button className="btn-secondary" onClick={onClose} type="button">
+            Cancel
+          </button>
+          <button className="btn-primary" form="endorse-form" type="submit" disabled={busy}>
+            {busy && <Loader2 className="h-4 w-4 animate-spin" />} Submit Endorsement
+          </button>
+        </>
+      }
+    >
+      <form id="endorse-form" onSubmit={submit} className="space-y-4">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Recognize this alumnus for their technical expertise, mentorship, or interview guidance.
+        </p>
+
+        <div>
+          <label className="label">Skill or Guidance Topic</label>
+          {availableSkills.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {availableSkills.slice(0, 6).map((s) => (
+                <button
+                  type="button"
+                  key={s}
+                  onClick={() => setSkill(s)}
+                  className={`chip text-xs transition ${
+                    skill.toLowerCase() === s.toLowerCase()
+                      ? '!bg-brand-600 !text-white !border-brand-600'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+          <input
+            className="input"
+            required
+            value={skill}
+            onChange={(e) => setSkill(e.target.value)}
+            placeholder="e.g. System Design, React, Placement Guidance"
+          />
+        </div>
+
+        <div>
+          <label className="label">Comment / Feedback (Optional)</label>
+          <textarea
+            className="input min-h-[90px]"
+            maxLength={400}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="e.g. Excellent guidance during mock interview and resume review!"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
 }
 
 function ReportModal({ open, onClose, alumni }) {
@@ -225,6 +320,32 @@ export default function AlumniProfile() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
+          {a.badges?.length > 0 && (
+            <section className="card p-5 sm:p-6 bg-gradient-to-br from-amber-500/10 via-brand-500/5 to-purple-500/10 border border-amber-200/80 dark:border-amber-900/60 shadow-xs">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="flex items-center gap-2 text-lg font-extrabold text-slate-900 dark:text-slate-100">
+                  <Award className="h-5 w-5 text-amber-500" /> Honors & Gamification Badges
+                </h2>
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-900/60 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
+                  {a.badges.length} {a.badges.length === 1 ? 'Badge' : 'Badges'} Earned
+                </span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {a.badges.map((b, i) => (
+                  <div key={i} className="flex items-start gap-3.5 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 shadow-xs">
+                    <div className="text-2xl p-2 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80 shrink-0">
+                      {b.name === 'top_mentor' ? '🌟' : b.name === 'alumni_of_year' ? '🏆' : b.name === 'active_referrer' ? '🤝' : '⭐'}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900 dark:text-white text-sm">{b.title}</h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">{b.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {a.bio && <Section title="About" icon={BookOpen}><p className="whitespace-pre-line leading-relaxed text-slate-600 dark:text-slate-300">{a.bio}</p></Section>}
 
           <Section title="How this alumni can help you" icon={HandHeart}>
@@ -274,6 +395,50 @@ export default function AlumniProfile() {
               </div>
             </Section>
           )}
+
+          <Section title="Peer & Student Endorsements" icon={Sparkles}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Skills and mentorship feedback confirmed by students and faculty.
+              </p>
+              {!isOwner && user && (
+                <button className="btn-secondary btn-sm flex items-center gap-1.5" onClick={() => setModal('endorse')}>
+                  <ThumbsUp className="h-3.5 w-3.5 text-brand-600" /> Endorse Alumni
+                </button>
+              )}
+            </div>
+
+            {a.endorsements?.length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {a.endorsements.map((e, idx) => (
+                  <div key={idx} className="rounded-xl border border-slate-200 dark:border-slate-800 p-3.5 bg-slate-50/60 dark:bg-slate-900/40 shadow-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-xs px-2.5 py-1 rounded-md bg-brand-50 text-brand-700 dark:bg-brand-950/50 dark:text-brand-300 border border-brand-200 dark:border-brand-800">
+                        {e.skillOrTopic}
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        {e.fromName} ({e.fromRole})
+                      </span>
+                    </div>
+                    {e.comment && (
+                      <p className="mt-2 text-xs italic text-slate-600 dark:text-slate-300">
+                        “{e.comment}”
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
+                <p className="text-xs text-slate-500">No endorsements yet. Be the first to endorse {a.fullName}!</p>
+                {!isOwner && user && (
+                  <button className="btn-secondary btn-sm mt-2" onClick={() => setModal('endorse')}>
+                    <ThumbsUp className="h-3.5 w-3.5 text-brand-600" /> Endorse {a.fullName?.split(' ')[0]}
+                  </button>
+                )}
+              </div>
+            )}
+          </Section>
 
           {(a.achievements?.length > 0 || a.certifications?.length > 0) && (
             <div className="grid gap-6 sm:grid-cols-2">
@@ -348,6 +513,7 @@ export default function AlumniProfile() {
         </>
       )}
       <ReportModal open={modal === 'report'} onClose={() => setModal(null)} alumni={a} />
+      <EndorseModal open={modal === 'endorse'} onClose={() => setModal(null)} alumni={a} onDone={reload} />
     </div>
   );
 }

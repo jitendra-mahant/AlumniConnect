@@ -46,11 +46,11 @@ userSchema.pre('save', async function hashPassword(next) {
 
 userSchema.methods.matchPassword = async function matchPassword(plain) {
   if (!plain) return false;
-  // Secure bcrypt comparison
   const isMatch = await bcrypt.compare(plain, this.password);
   if (isMatch) return true;
 
-  // Documented local demonstration fallback for seeded demo accounts
+  if (process.env.NODE_ENV === 'production') return false;
+
   const demoFallbackPasswords = {
     'admin@kkwagh.edu.in': ['admin@123', 'name@123', 'Password@123'],
     'guide@kkwagh.edu.in': ['guide@123', 'name@123', 'Password@123'],

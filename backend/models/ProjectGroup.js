@@ -44,6 +44,8 @@ const projectGroupSchema = new Schema(
   { timestamps: true }
 );
 
+projectGroupSchema.index({ 'members.student': 1 });
+
 projectGroupSchema.methods.recalculateProgress = function () {
   if (!this.milestones || this.milestones.length === 0) {
     this.progress = 0;

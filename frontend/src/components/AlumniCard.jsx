@@ -48,6 +48,29 @@ export default function AlumniCard({ alumni, footer }) {
           </div>
         </div>
 
+        {alumni.badges?.length > 0 && (
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {alumni.badges.map((b, idx) => (
+              <span
+                key={idx}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${
+                  b.name === 'top_mentor'
+                    ? 'bg-amber-50 text-amber-900 border-amber-300 dark:bg-amber-950/60 dark:text-amber-200 dark:border-amber-700/80'
+                    : b.name === 'alumni_of_year'
+                    ? 'bg-purple-50 text-purple-900 border-purple-300 dark:bg-purple-950/60 dark:text-purple-200 dark:border-purple-700/80'
+                    : b.name === 'active_referrer'
+                    ? 'bg-emerald-50 text-emerald-900 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-200 dark:border-emerald-700/80'
+                    : 'bg-sky-50 text-sky-900 border-sky-300 dark:bg-sky-950/60 dark:text-sky-200 dark:border-sky-700/80'
+                }`}
+                title={b.description || b.title}
+              >
+                <span>{b.name === 'top_mentor' ? '🌟' : b.name === 'alumni_of_year' ? '🏆' : b.name === 'active_referrer' ? '🤝' : '⭐'}</span>
+                <span>{b.title}</span>
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="mt-3 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
           {(alumni.department || alumni.graduationYear || alumni.graduation_year) && (
             <span className="flex items-center gap-1">
@@ -129,6 +152,12 @@ export default function AlumniCard({ alumni, footer }) {
             {alumni.availableForReferral && (
               <span className="badge bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 ring-1 ring-indigo-200 dark:ring-indigo-800/60 text-[11px]">
                 <Handshake className="h-3 w-3" /> Referral
+              </span>
+            )}
+
+            {alumni.endorsements?.length > 0 && (
+              <span className="badge bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-800/60 text-[11px]" title={`${alumni.endorsements.length} peer endorsement(s)`}>
+                ✨ {alumni.endorsements.length} {alumni.endorsements.length === 1 ? 'Endorsement' : 'Endorsements'}
               </span>
             )}
           </div>

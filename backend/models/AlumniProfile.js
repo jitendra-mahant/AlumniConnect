@@ -98,6 +98,29 @@ const alumniProfileSchema = new Schema(
     },
     verificationNote: { type: String, trim: true },
     verifiedAt: Date,
+
+    // Gamification & Recognition Badges
+    badges: [
+      {
+        name: { type: String, required: true },
+        title: { type: String, required: true },
+        icon: { type: String, default: 'Award' },
+        description: { type: String },
+        awardedAt: { type: Date, default: Date.now },
+      },
+    ],
+
+    // Peer & Student Endorsements
+    endorsements: [
+      {
+        fromUser: { type: Schema.Types.ObjectId, ref: 'User' },
+        fromName: { type: String, required: true },
+        fromRole: { type: String, enum: ['student', 'alumni', 'teacher', 'admin'], default: 'student' },
+        skillOrTopic: { type: String, required: true },
+        comment: { type: String, maxlength: 500 },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

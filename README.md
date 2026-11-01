@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # AlumniConnect — KKWAGH Alumni & Student Network
 
 AlumniConnect is a high-performance, college-specific professional networking and career mentorship platform engineered specifically for **K.K. Wagh Institute of Engineering Education & Research (KKWAGH)**.
@@ -51,6 +50,12 @@ npm run dev:memory
 ```
 *Spawns an isolated `mongodb-memory-server` on `127.0.0.1:27018` with persistent local disk storage in `backend/.mongo-data/`.*
 
+### Database configuration and health
+
+The regular backend, seed command, smoke test, and CSV importer use `MONGODB_URI` from `backend/.env`; they do not switch to a demo database when a connection fails. For local development, set it to `mongodb://127.0.0.1:27017/db_alumini_years`. For Render, set the same variable to your MongoDB Atlas URI in the service's Environment settings. Do not commit `backend/.env` or put credentials in source code. URL-encode special characters in the Atlas database user's password. For a new production database, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in Render to provision only the initial administrator; sample users and projects are not created.
+
+The backend waits for MongoDB before listening and exits if the connection fails. `GET /api/health` reports the Mongoose connection state and returns HTTP 503 unless it is connected. `npm run dev:memory` is an explicit development/demo mode and uses its own embedded MongoDB; data in that mode is not your Atlas database.
+
 ---
 
 ### 2. Services, Ports, and Browser URLs
@@ -67,7 +72,7 @@ npm run dev:memory
 
 ### 3. Verified Pre-Configured Demo Accounts
 
-For evaluation and rapid testing, all 4 platform roles have pre-verified demo credentials that automatically bootstrap on server start:
+These demo accounts are bootstrapped only by the explicit `npm run dev:memory` development/demo command. Standard `npm run dev` and production `npm start` do not create demo users, sample profiles, or project data:
 
 | Role | Email | Password | What to Expect / Key Features |
 |---|---|---|---|
@@ -75,8 +80,6 @@ For evaluation and rapid testing, all 4 platform roles have pre-verified demo cr
 | **Alumni (Verified)** | `alumni@kkwagh.edu.in` | `name@123` | • Post jobs & internships<br>• Answer questions in Community Q&A forum with verified badge<br>• Review and accept incoming student connection & mentorship requests<br>• Manage professional profile & mentorship settings |
 | **Project Guide / Teacher** | `guide@kkwagh.edu.in` | `name@123` | • Access Teacher Dashboard (`/teacher/dashboard`)<br>• Oversee student project groups, milestones, and deliverables<br>• Provide academic feedback and track student progress<br>• Coordinate with verified alumni for technical mentorship |
 | **Administrator** | `admin@kkwagh.edu.in` | `name@123` | • Access Admin Analytics Dashboard (`/admin`)<br>• Verify or reject pending alumni profiles<br>• User management (activate/suspend/delete)<br>• Review abuse reports & trigger DSA in-memory cache rebuild |
-
-> **Convenience Feature:** On the Login page (`/login`), click any role badge under **Quick Demo Accounts** (Student, Alumni, Teacher / Guide, Administrator) to autofill credentials safely into the input fields without automatically submitting the form.
 
 ---
 
@@ -372,6 +375,3 @@ alumniconnect/
 │   └── scripts/                  # Automated verification and test suites
 └── cpp/                          # Standalone C++ verification modules
 ```
-=======
-# AlumniConnect
->>>>>>> origin/main

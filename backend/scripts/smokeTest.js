@@ -3,9 +3,8 @@
  * Automatically reseeds database before execution for clean, deterministic results.
  * Usage: npm run test:smoke
  */
-const net = require('net');
 const mongoose = require('mongoose');
-const env = require('../config/env');
+require('../config/env');
 const connectDB = require('../config/db');
 const { seedDatabase } = require('../seed/seed');
 
@@ -42,26 +41,14 @@ function check(name, cond, extra = '') {
 const login = async (email, password = 'Password@123') =>
   await call('POST', '/auth/login', { body: { email, password } });
 
-const isPortOpen = (port, host = '127.0.0.1', timeout = 500) =>
-  new Promise((resolve) => {
-    const s = new net.Socket();
-    s.setTimeout(timeout);
-    s.on('connect', () => { s.destroy(); resolve(true); });
-    s.on('timeout', () => { s.destroy(); resolve(false); });
-    s.on('error', () => { s.destroy(); resolve(false); });
-    s.connect(port, host);
-  });
-
 (async () => {
   console.log('--- Initializing Clean Test Database ---');
   try {
-    const port27018 = await isPortOpen(27018);
-    const uri = process.env.MONGODB_URI || (port27018 ? 'mongodb://127.0.0.1:27018/alumniconnect' : env.mongoUri);
-    await connectDB(uri);
+    await connectDB();
     await seedDatabase({ log: () => {} });
     console.log('Database successfully reseeded for test run.\n');
   } catch (err) {
-    console.warn('Could not reseed directly (running against live DB):', err.message);
+    console.warn(`[smoke] Could not reseed database (${err.name || 'Error'}).`);
   }
 
   // Force running server to refresh in-memory Trie & Hash Map

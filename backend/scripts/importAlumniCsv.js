@@ -13,52 +13,24 @@
  *   npm run import:csv
  */
 
-const net = require('net');
-const path = require('path');
 const mongoose = require('mongoose');
 
 // Load environment variables
-require('../config/env');
+const env = require('../config/env');
 const connectDB = require('../config/db');
 const { importCsvAlumni } = require('../services/importCsvService');
 const { import2022Alumni } = require('../services/import2022Service');
-
-function isPortOpen(port, host = '127.0.0.1', timeout = 1000) {
-  return new Promise((resolve) => {
-    const s = new net.Socket();
-    s.setTimeout(timeout);
-    s.on('connect', () => { s.destroy(); resolve(true); });
-    s.on('timeout', () => { s.destroy(); resolve(false); });
-    s.on('error', () => { s.destroy(); resolve(false); });
-    s.connect(port, host);
-  });
-}
 
 (async () => {
   console.log('='.repeat(70));
   console.log('   Alumni Connect — CSV Alumni Data Migration & Synchronization   ');
   console.log('='.repeat(70));
 
-  let mongod = null;
-  const is27017 = await isPortOpen(27017);
-  const is27018 = await isPortOpen(27018);
-
-  let uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/db_alumini_years';
-
-  if (!is27017 && !is27018) {
-    console.log('[import] No active MongoDB on 27017/27018. Initializing embedded MongoDB...');
-    const { MongoMemoryServer } = require('mongodb-memory-server');
-    const dbPath = path.resolve(__dirname, '../.mongo-data');
-    mongod = await MongoMemoryServer.create({
-      instance: { dbPath, storageEngine: 'wiredTiger', port: 27018 },
-    });
-    uri = `${mongod.getUri()}db_alumini_years`;
-  } else if (!is27017 && is27018) {
-    uri = 'mongodb://127.0.0.1:27018/db_alumini_years';
+  if (!env.mongoUri) {
+    throw new Error('MONGODB_URI is required. Set it in backend/.env before importing data.');
   }
 
-  console.log(`[import] Connecting to MongoDB: ${uri}`);
-  await connectDB(uri);
+  await connectDB();
 
   // First ensure 2022 dataset is synced
   console.log('\n--- Step 1: Synchronizing 2022 Alumni Dataset ---');
@@ -95,9 +67,8 @@ function isPortOpen(port, host = '127.0.0.1', timeout = 1000) {
   console.log('✓ Migration completed successfully. Data synchronized with database.\n');
 
   await mongoose.disconnect();
-  if (mongod) await mongod.stop();
   process.exit(0);
 })().catch((err) => {
-  console.error('\n[import] Fatal error during CSV migration:', err);
+  console.error(`\n[import] Fatal error during CSV migration (${err.name || 'Error'}).`);
   process.exit(1);
 });

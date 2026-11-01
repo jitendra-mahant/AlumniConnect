@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-do
 import {
   AlertCircle,
   Award,
+  Building2,
+  BriefcaseBusiness,
   CheckCircle2,
   Eye,
   EyeOff,
@@ -204,7 +206,7 @@ export function Login() {
   const [params] = useSearchParams();
   const toast = useToast();
 
-  const [form, setForm] = useState({ email: params.get('email') || '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState(params.get('expired') ? 'Your session expired. Please log in again.' : '');
   const [busy, setBusy] = useState(false);
 
@@ -215,8 +217,7 @@ export function Login() {
   const [passwordChangeError, setPasswordChangeError] = useState('');
 
   useEffect(() => {
-    const qEmail = params.get('email');
-    if (qEmail) setForm((f) => ({ ...f, email: qEmail }));
+    setForm({ email: '', password: '' });
   }, [params]);
 
   const submit = async (e) => {
@@ -292,22 +293,28 @@ export function Login() {
     }
   };
 
-  // Autofill credentials without submitting automatically
-  const fill = (email, password) => {
-    setForm({ email, password });
-    setError('');
-  };
+  const isTeacherPortal = params.get('role') === 'teacher' || location.state?.from?.includes('/teacher');
+  const isAdminPortal = params.get('role') === 'admin' || location.state?.from?.includes('/admin');
 
   return (
     <AuthShell
-      title="Welcome back"
-      subtitle="Log in to continue to AlumniConnect KKWAGH."
+      title={isTeacherPortal ? "Faculty & Guide Portal" : isAdminPortal ? "Administrator Sign In" : "Welcome back"}
+      subtitle={
+        isTeacherPortal
+          ? "Log in with your official faculty account (@kkwagh.edu.in) to access project groups & guide workspace."
+          : isAdminPortal
+          ? "Enter your verified administrator credentials to access the portal."
+          : "Log in to continue to AlumniConnect KKWAGH."
+      }
       footer={
         <div className="space-y-2 text-center text-sm text-slate-600 dark:text-slate-300">
           <div>
             New to AlumniConnect?{' '}
-            <Link to="/register" className="font-bold text-brand-700 dark:text-brand-400 hover:underline">
-              Create an account
+            <Link
+              to={isTeacherPortal ? '/register?role=teacher' : '/register'}
+              className="font-bold text-brand-700 dark:text-brand-400 hover:underline"
+            >
+              {isTeacherPortal ? 'Create a teacher account' : 'Create an account'}
             </Link>
           </div>
           <div>
@@ -321,7 +328,19 @@ export function Login() {
         </div>
       }
     >
-      <form onSubmit={submit} className="space-y-4">
+      <form onSubmit={submit} className="space-y-4" autoComplete="off">
+        {isTeacherPortal && (
+          <div className="rounded-lg border border-teal-200 dark:border-teal-900/60 bg-teal-50 dark:bg-teal-950/40 p-3 text-xs text-teal-800 dark:text-teal-200 flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+            <span><b>Faculty Workspace:</b> Access project groups, track milestones, and review student progress.</span>
+          </div>
+        )}
+        {isAdminPortal && (
+          <div className="rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50 dark:bg-purple-950/40 p-3 text-xs text-purple-800 dark:text-purple-200 flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-purple-600 dark:text-purple-400" />
+            <span><b>Administrator Access:</b> Institutional verification and directory governance console.</span>
+          </div>
+        )}
         {error && (
           <div
             role="alert"
@@ -339,13 +358,14 @@ export function Login() {
           <IconInput
             icon={Mail}
             id="email"
+            name="login-email"
             type="email"
             required
-            autoComplete="email"
+            autoComplete="off"
             placeholder="username@kkwagh.edu.in"
             value={form.email}
             onChange={(e) => {
-              setForm({ ...form, email: e.target.value });
+              setForm((current) => ({ ...current, email: e.target.value }));
               if (error) setError('');
             }}
           />
@@ -357,12 +377,13 @@ export function Login() {
           </label>
           <PasswordInput
             id="password"
+            name="login-password"
             required
-            autoComplete="current-password"
+            autoComplete="off"
             placeholder="••••••••"
             value={form.password}
             onChange={(e) => {
-              setForm({ ...form, password: e.target.value });
+              setForm((current) => ({ ...current, password: e.target.value }));
               if (error) setError('');
             }}
           />
@@ -372,51 +393,6 @@ export function Login() {
           {busy && <Loader2 className="h-4 w-4 animate-spin" />} Log in
         </button>
       </form>
-
-      {/* Verified Demo Accounts Section (Click to fill credentials) */}
-      <div className="mt-5 border-t border-slate-200 dark:border-slate-800 pt-4">
-        <p className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          Demo Accounts (Click to fill credentials)
-        </p>
-        <div className="grid grid-cols-2 gap-2.5">
-          <button
-            type="button"
-            className="btn-secondary btn-sm flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold"
-            onClick={() => fill('student@kkwagh.edu.in', 'student@123')}
-            title="Autofill Student Demo Account"
-          >
-            <UserIcon className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-            <span className="truncate">Student</span>
-          </button>
-          <button
-            type="button"
-            className="btn-secondary btn-sm flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold"
-            onClick={() => fill('alumni@kkwagh.edu.in', 'alumni@123')}
-            title="Autofill Alumnus Demo Account"
-          >
-            <Award className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-            <span className="truncate">Alumni</span>
-          </button>
-          <button
-            type="button"
-            className="btn-secondary btn-sm flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold"
-            onClick={() => fill('guide@kkwagh.edu.in', 'guide@123')}
-            title="Autofill Placement Office & Faculty Guide Account"
-          >
-            <GraduationCap className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-            <span className="truncate">Placement / Guide</span>
-          </button>
-          <button
-            type="button"
-            className="btn-secondary btn-sm flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold"
-            onClick={() => fill('admin@kkwagh.edu.in', 'admin@123')}
-            title="Autofill Administrator Account"
-          >
-            <Users className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-            <span className="truncate">Administrator</span>
-          </button>
-        </div>
-      </div>
 
       {/* Mandatory Password Change Modal for Temporary Credentials */}
       {mustChangeModal.open && (
@@ -484,16 +460,30 @@ export function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
   const toast = useToast();
+  const requestedRole = params.get('role');
+  const initialRole = ['student', 'alumni', 'teacher'].includes(requestedRole) ? requestedRole : 'student';
 
   const [form, setForm] = useState({
     name: '',
     email: params.get('email') || '',
+    employeeId: '',
+    department: '',
+    designation: '',
     password: '',
-    role: params.get('role') === 'alumni' ? 'alumni' : params.get('role') === 'teacher' ? 'teacher' : 'student',
+    confirmPassword: '',
+    role: initialRole,
   });
   const [error, setError] = useState('');
   const [duplicateAccount, setDuplicateAccount] = useState(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    const role = ['student', 'alumni', 'teacher'].includes(params.get('role'))
+      ? params.get('role')
+      : 'student';
+    const email = params.get('email') || '';
+    setForm((current) => ({ ...current, role, email }));
+  }, [params]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -511,6 +501,17 @@ export function Register() {
       return;
     }
 
+    if (form.role === 'teacher') {
+      if (!form.employeeId.trim() || !form.department.trim() || !form.designation.trim()) {
+        setError('Employee ID, department, and designation are required for teacher registration.');
+        return;
+      }
+      if (form.password !== form.confirmPassword) {
+        setError('Passwords do not match.');
+        return;
+      }
+    }
+
     if (form.password.length < 6) {
       setError('Password must be at least 6 characters long.');
       return;
@@ -523,6 +524,11 @@ export function Register() {
         email: normalized,
         password: form.password,
         role: form.role,
+        ...(form.role === 'teacher' && {
+          employeeId: form.employeeId.trim(),
+          department: form.department.trim(),
+          designation: form.designation.trim(),
+        }),
       });
 
       if (res?.requiresVerification) {
@@ -570,13 +576,22 @@ export function Register() {
       footer={
         <>
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-brand-700 dark:text-brand-400 hover:underline">
-            Log in
+          <Link
+            to={form.role === 'teacher' ? '/login?role=teacher' : '/login'}
+            className="font-semibold text-brand-700 dark:text-brand-400 hover:underline"
+          >
+            {form.role === 'teacher' ? 'Teacher login' : 'Log in'}
           </Link>
         </>
       }
     >
-      <form onSubmit={submit} className="space-y-4">
+      <form onSubmit={submit} className="space-y-4" autoComplete="off">
+        {form.role === 'teacher' && (
+          <div className="rounded-lg border border-teal-200 dark:border-teal-900/60 bg-teal-50 dark:bg-teal-950/40 p-3 text-xs text-teal-800 dark:text-teal-200 flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+            <span><b>Faculty Workspace:</b> Access project groups, track milestones, and review student progress.</span>
+          </div>
+        )}
         {error && (
           <div
             role="alert"
@@ -592,7 +607,7 @@ export function Register() {
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                   <span className="text-slate-600 dark:text-slate-400 font-semibold">Options:</span>
                   <Link
-                    to={`/login?email=${encodeURIComponent(duplicateAccount.email)}`}
+                    to="/login"
                     className="font-bold text-brand-700 dark:text-brand-400 hover:underline inline-flex items-center gap-1"
                   >
                     Log in &rarr;
@@ -617,7 +632,7 @@ export function Register() {
               <button
                 key={value}
                 type="button"
-                onClick={() => setForm({ ...form, role: value })}
+                onClick={() => setForm((current) => ({ ...current, role: value }))}
                 className={`rounded-lg border p-2.5 text-left transition ${
                   form.role === value
                     ? 'border-brand-600 bg-brand-50/60 dark:bg-brand-950/40 dark:border-brand-500 ring-2 ring-brand-500/20'
@@ -650,7 +665,7 @@ export function Register() {
             placeholder="Your full name"
             value={form.name}
             onChange={(e) => {
-              setForm({ ...form, name: e.target.value });
+              setForm((current) => ({ ...current, name: e.target.value }));
               if (error) setError('');
             }}
           />
@@ -665,11 +680,12 @@ export function Register() {
             id="email"
             type="email"
             required
-            autoComplete="email"
+            autoComplete="off"
+            name="registration-email"
             placeholder="username@kkwagh.edu.in"
             value={form.email}
             onChange={(e) => {
-              setForm({ ...form, email: e.target.value });
+              setForm((current) => ({ ...current, email: e.target.value }));
               if (duplicateAccount) setDuplicateAccount(null);
               if (error) setError('');
             }}
@@ -678,6 +694,47 @@ export function Register() {
             Only official @kkwagh.edu.in addresses are accepted.
           </p>
         </div>
+
+        {form.role === 'teacher' && (
+          <>
+            <div>
+              <label className="label" htmlFor="employeeId">Employee ID</label>
+              <IconInput
+                icon={UserIcon}
+                id="employeeId"
+                required
+                autoComplete="off"
+                value={form.employeeId}
+                onChange={(e) => setForm((current) => ({ ...current, employeeId: e.target.value }))}
+                placeholder="Your college employee ID"
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="department">Department</label>
+              <IconInput
+                icon={Building2}
+                id="department"
+                required
+                autoComplete="organization"
+                value={form.department}
+                onChange={(e) => setForm((current) => ({ ...current, department: e.target.value }))}
+                placeholder="e.g. Computer Engineering"
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="designation">Designation</label>
+              <IconInput
+                icon={BriefcaseBusiness}
+                id="designation"
+                required
+                autoComplete="organization-title"
+                value={form.designation}
+                onChange={(e) => setForm((current) => ({ ...current, designation: e.target.value }))}
+                placeholder="e.g. Assistant Professor"
+              />
+            </div>
+          </>
+        )}
 
         <div>
           <label className="label" htmlFor="password">
@@ -691,11 +748,26 @@ export function Register() {
             placeholder="Choose a secure password (min 6 characters)"
             value={form.password}
             onChange={(e) => {
-              setForm({ ...form, password: e.target.value });
+              setForm((current) => ({ ...current, password: e.target.value }));
               if (error) setError('');
             }}
           />
         </div>
+
+        {form.role === 'teacher' && (
+          <div>
+            <label className="label" htmlFor="confirmPassword">Confirm Password</label>
+            <PasswordInput
+              id="confirmPassword"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              placeholder="Re-enter your password"
+              value={form.confirmPassword}
+              onChange={(e) => setForm((current) => ({ ...current, confirmPassword: e.target.value }))}
+            />
+          </div>
+        )}
 
         {form.role === 'alumni' && (
           <p className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 p-2.5 text-xs text-amber-800 dark:text-amber-300">
